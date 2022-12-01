@@ -50,14 +50,17 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     func test_load_receivesInvalidDataErrorOnNonOkStatusCode() {
         let (sut, client) = makeSut()
+        let samples = [199, 201, 300, 400, 500]
         
-        var capturedErrors = [RemoteFeedLoader.Error?]()
-        sut.load { error in
-            capturedErrors.append(error)
+        samples.enumerated().forEach { index, code in
+            var capturedErrors = [RemoteFeedLoader.Error?]()
+            sut.load { error in
+                capturedErrors.append(error)
+            }
+            client.complete(withCode: code, at: index)
+            
+            XCTAssertEqual(capturedErrors, [.invalidData])
         }
-        client.complete(withCode: 300)
-        
-        XCTAssertEqual(capturedErrors, [.invalidData])
     }
     
     // MARK: - Helpers
