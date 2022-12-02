@@ -75,35 +75,21 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     func test_load_receivesFeedItemsOnNonEmptyJSONAndOkCode() {
         let (sut, client) = makeSut()
-        let item1 = FeedItem(
+        let (item1, jsonItem1) = makeItem(
             id: UUID(),
-            description: nil,
-            location: nil,
             imageUrl: URL(string: "http://some-url.com")!
         )
-        let jsonItem1 = [
-            "id": item1.id.uuidString,
-            "image": item1.imageUrl.absoluteString
-        ]
-        let item2 = FeedItem(
+        let (item2, jsonItem2) = makeItem(
             id: UUID(),
             description: "item 2 description",
             location: "item 2 location",
             imageUrl: URL(string: "http://some-url.com")!
         )
-        let jsonItem2 = [
-            "id": item2.id.uuidString,
-            "description": item2.description,
-            "location": item2.location,
-            "image": item2.imageUrl.absoluteString
-        ].compactMapValues { $0 }
-        let root = [
-            "items": [jsonItem1, jsonItem2]
-        ]
+        let jsonItems = [jsonItem1, jsonItem2]
+        let jsonData = makeJsonData(from: jsonItems)
         
         assert(sut: sut, equalTo: .success([item1, item2]), when: {
-            let json = try! JSONSerialization.data(withJSONObject: root)
-            client.complete(withCode: 200, data: json)
+            client.complete(withCode: 200, data: jsonData)
         })
     }
     
@@ -114,6 +100,29 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientSpy()
         let sut = RemoteFeedLoader(url: url, client: client)
         return (sut, client)
+    }
+    
+    private func makeItem(id: UUID, description: String? = nil, location: String? = nil, imageUrl: URL) -> (model: FeedItem, json: [String: Any]) {
+        let item = FeedItem(
+            id: id,
+            description: description,
+            location: location,
+            imageUrl: imageUrl
+        )
+        let jsonItem = [
+            "id": item.id.uuidString,
+            "description": item.description,
+            "location": item.location,
+            "image": item.imageUrl.absoluteString
+        ].compactMapValues { $0 }
+        return (item, jsonItem)
+    }
+    
+    private func makeJsonData(from jsonItems: [[String: Any]]) -> Data {
+        let root = [
+            "items": jsonItems
+        ]
+        return try! JSONSerialization.data(withJSONObject: root)
     }
     
     private func assert(
