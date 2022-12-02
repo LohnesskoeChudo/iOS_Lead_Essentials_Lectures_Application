@@ -64,7 +64,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         })
     }
     
-    func test_load_receivesEmptyArrayOnEmptyJSON() {
+    func test_load_receivesEmptyArrayOnEmptyJSONAndOkCode() {
         let (sut, client) = makeSut()
         
         assert(sut: sut, equalTo: .success([]), when: {
@@ -73,7 +73,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         })
     }
     
-    func test_load_receivesFeedItemsOnNonEmptyJSON() {
+    func test_load_receivesFeedItemsOnNonEmptyJSONAndOkCode() {
         let (sut, client) = makeSut()
         let item1 = FeedItem(
             id: UUID(),
