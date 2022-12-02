@@ -50,7 +50,8 @@ final class RemoteFeedLoaderTests: XCTestCase {
         
         samples.enumerated().forEach { index, code in
             assert(sut: sut, equalTo: .failure(.invalidData), when: {
-                client.complete(withCode: code, at: index)
+                let jsonData = makeJsonData(from: [])
+                client.complete(withCode: code, data: jsonData, at: index)
             })
         }
     }
