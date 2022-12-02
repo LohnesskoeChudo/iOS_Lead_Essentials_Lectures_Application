@@ -17,7 +17,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     }
     
     func test_load_requestsFromProperUrl() {
-        let url = URL(string: "http://given-url.com")!
+        let url = anyUrl
         let (sut, client) = makeSut(url: url)
         
         sut.load()
@@ -26,7 +26,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     }
     
     func test_loadTwice_requestsFromProperUrlTwice() {
-        let url = URL(string: "http://given-url.com")!
+        let url = anyUrl
         let (sut, client) = makeSut(url: url)
         
         sut.load()
@@ -77,13 +77,13 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let (sut, client) = makeSut()
         let (item1, jsonItem1) = makeItem(
             id: UUID(),
-            imageUrl: URL(string: "http://some-url.com")!
+            imageUrl: anyUrl
         )
         let (item2, jsonItem2) = makeItem(
             id: UUID(),
             description: "item 2 description",
             location: "item 2 location",
-            imageUrl: URL(string: "http://some-url.com")!
+            imageUrl: anyUrl
         )
         let jsonItems = [jsonItem1, jsonItem2]
         let jsonData = makeJsonData(from: jsonItems)
@@ -138,6 +138,10 @@ final class RemoteFeedLoaderTests: XCTestCase {
         }
         action()
         XCTAssertEqual(capturedResults, [result], file: file, line: line)
+    }
+    
+    private var anyUrl: URL {
+        URL(string: "http://given-url.com")!
     }
     
     class HTTPClientSpy: HTTPClient {
