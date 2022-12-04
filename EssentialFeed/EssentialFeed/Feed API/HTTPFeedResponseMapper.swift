@@ -31,7 +31,7 @@ enum HTTPFeedResponseMapper {
     
     static func map(data: Data, response: HTTPURLResponse) -> RemoteFeedLoader.Result {
         guard response.statusCode == OK_Code, let root = decodeRoot(data: data) else {
-            return .failure(.invalidData)
+            return .failure(RemoteFeedLoader.Error.invalidData)
         }
         return .success(root.feedItems)
     }
