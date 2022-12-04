@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum FeedResult {
-    case success(FeedItem)
+public enum FeedResult {
+    case success([FeedItem])
     case failure(Error)
 }
 
