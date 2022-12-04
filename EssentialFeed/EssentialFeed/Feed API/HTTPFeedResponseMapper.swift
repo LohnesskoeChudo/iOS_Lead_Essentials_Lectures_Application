@@ -10,6 +10,10 @@ import Foundation
 enum HTTPFeedResponseMapper {
     struct Root: Decodable {
         let items: [RemoteFeedItem]
+        
+        var feedItems: [FeedItem] {
+            items.map { $0.feedItem }
+        }
     }
 
     struct RemoteFeedItem: Decodable {
@@ -25,11 +29,14 @@ enum HTTPFeedResponseMapper {
     
     private static let OK_Code = 200
     
-    static func map(data: Data, response: HTTPURLResponse) throws -> [FeedItem] {
-        guard response.statusCode == OK_Code else {
-            throw RemoteFeedLoader.Error.invalidData
+    static func map(data: Data, response: HTTPURLResponse) -> RemoteFeedLoader.Result {
+        guard response.statusCode == OK_Code, let root = decodeRoot(data: data) else {
+            return .failure(.invalidData)
         }
-        let remoteItems = try JSONDecoder().decode(Root.self, from: data)
-        return remoteItems.items.map { $0.feedItem }
+        return .success(root.feedItems)
+    }
+    
+    static private func decodeRoot(data: Data) -> Root? {
+        try? JSONDecoder().decode(Root.self, from: data)
     }
 }
