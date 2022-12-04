@@ -94,6 +94,20 @@ final class RemoteFeedLoaderTests: XCTestCase {
         })
     }
     
+    func test_load_doesNotReceiveResultAfterSutDealocation() {
+        let client = HTTPClientSpy()
+        var sut: RemoteFeedLoader? = .init(url: anyUrl, client: client)
+        
+        var capturedResults = [RemoteFeedLoader.Result]()
+        sut?.load { result in
+            capturedResults.append(result)
+        }
+        sut = nil
+        client.complete(with: NSError(domain: "any", code: 1))
+        
+        XCTAssert(capturedResults.isEmpty)
+    }
+    
     // MARK: - Helpers
     
     private func makeSut(
