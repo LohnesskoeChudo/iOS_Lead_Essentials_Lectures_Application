@@ -45,7 +45,7 @@ final class HTTPClientTests: XCTestCase {
     
     func test_get_requestsWithCorrectUrl() {
         let url = anyUrl()
-        let sut = URLSessionHTTPClient()
+        let sut = makeSut()
         
         let exp = expectation(description: "waiting for capturing url")
         URLProtocolStub.observeRequests { request in
@@ -124,7 +124,7 @@ final class HTTPClientTests: XCTestCase {
     }
     
     private func resultForStubbed(data: Data?, response: URLResponse?, error: NSError?, file: StaticString = #filePath, line: UInt = #line) -> HTTPResponse {
-        let sut = URLSessionHTTPClient()
+        let sut = makeSut()
         URLProtocolStub.stub(data: data, response: response, error: error)
         
         let exp = expectation(description: "wait for getting from url")
@@ -136,6 +136,22 @@ final class HTTPClientTests: XCTestCase {
         
         wait(for: [exp], timeout: 1.0)
         return receivedResult
+    }
+    
+    private func makeSut() -> HTTPClient {
+        let sut = URLSessionHTTPClient()
+        checkForMemoryLeaks(instance: sut)
+        return sut
+    }
+    
+    private func checkForMemoryLeaks(
+        instance: AnyObject,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        addTeardownBlock { [weak instance] in
+            XCTAssertNil(instance, "\(String(describing: instance)) supposed to be not nil. Potentially memory leak.", file: file, line: line)
+        }
     }
     
     private func anyUrl() -> URL {
