@@ -19,9 +19,11 @@ final class URLSessionHTTPClient: HTTPClient {
     struct UnexpectedResponse: Error {}
     
     func get(from url: URL, completion: @escaping (HTTPResponse) -> Void) {
-        session.dataTask(with: url) { _, _, error in
+        session.dataTask(with: url) { data, response, error in
             if let error = error {
                 completion(.failure(error))
+            } else if let data = data, data.count > 0, let response = response as? HTTPURLResponse {
+                completion(.success(data, response))
             } else {
                 completion(.failure(UnexpectedResponse()))
             }
@@ -85,7 +87,29 @@ final class HTTPClientTests: XCTestCase {
         XCTAssertNotNil(errorForStubbed(data: anyData(), response: anyHTTPUrlResponse(), error: anyNsError()))
         XCTAssertNotNil(errorForStubbed(data: anyData(), response: nil, error: nil))
         XCTAssertNotNil(errorForStubbed(data: anyData(), response: nil, error: anyNsError()))
-        XCTAssertNotNil(errorForStubbed(data: nil, response: anyHTTPUrlResponse(), error: nil))
+        XCTAssertNotNil(errorForStubbed(data: anyData(), response: anyNonHTTPUrlResponse(), error: nil))
+    }
+    
+    func test_get_producesHTTPResultOnValidResponse() {
+        let data = anyData()
+        let httpResponse = anyHTTPUrlResponse()
+        let sut = URLSessionHTTPClient()
+        URLProtocolStub.stub(data: data, response: httpResponse, error: nil)
+        
+        let exp = expectation(description: "wait for getting from url")
+        sut.get(from: anyUrl()) { response in
+            switch response {
+            case let .success(receivedData, receivedResponse):
+                XCTAssertEqual(receivedData, data)
+                XCTAssertEqual(receivedResponse.statusCode, httpResponse.statusCode)
+                XCTAssertEqual(receivedResponse.url, httpResponse.url)
+            default:
+                XCTFail("Expected to succeed")
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
     }
     
     // MARK: - Helpers
