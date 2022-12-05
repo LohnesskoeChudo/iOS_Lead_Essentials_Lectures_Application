@@ -16,10 +16,14 @@ final class URLSessionHTTPClient: HTTPClient {
         self.session = session
     }
     
+    struct UnexpectedResponse: Error {}
+    
     func get(from url: URL, completion: @escaping (HTTPResponse) -> Void) {
         session.dataTask(with: url) { _, _, error in
             if let error = error {
                 completion(.failure(error))
+            } else {
+                completion(.failure(UnexpectedResponse()))
             }
         }.resume()
     }
@@ -68,10 +72,35 @@ final class HTTPClientTests: XCTestCase {
             }
             exp.fulfill()
         }
+        
         wait(for: [exp], timeout: 1.0)
     }
     
+    func test_get_producesErrorOnInvalidResponses() {
+        XCTAssertNotNil(errorForStubbed(data: nil, response: nil, error: nil))
+    }
+    
     // MARK: - Helpers
+    
+    private func errorForStubbed(data: Data?, response: URLResponse?, error: NSError?, file: StaticString = #filePath, line: UInt = #line) -> Error? {
+        let sut = URLSessionHTTPClient()
+        URLProtocolStub.stub(data: data, response: response, error: error)
+        
+        let exp = expectation(description: "wait for getting from url")
+        var receivedError: Error?
+        sut.get(from: anyUrl()) { response in
+            switch response {
+            case let .failure(error):
+                receivedError = error
+            default:
+                XCTFail("Expected to get an errror", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+        return receivedError
+    }
     
     private func anyUrl() -> URL {
         URL(string: "http://any-url.com")!
@@ -94,14 +123,16 @@ final class HTTPClientTests: XCTestCase {
         }
         
         private struct Stub {
+            let data: Data?
+            let response: URLResponse?
             let error: NSError?
         }
         
         private static var stub: Stub?
         private static var requestObservation: ((URLRequest) -> Void)?
         
-        static func stub(error: NSError) {
-            stub = Stub(error: error)
+        static func stub(data: Data? = nil, response: URLResponse? = nil, error: NSError?) {
+            stub = Stub(data: data, response: response, error: error)
         }
         
         static func observeRequests(_ completion: @escaping (URLRequest) -> Void) {
@@ -116,6 +147,12 @@ final class HTTPClientTests: XCTestCase {
         override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
         
         override func startLoading() {
+            if let data = Self.stub?.data {
+                client?.urlProtocol(self, didLoad: data)
+            }
+            if let response = Self.stub?.response {
+                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+            }
             if let error = Self.stub?.error {
                 client?.urlProtocol(self, didFailWithError: error)
             }
