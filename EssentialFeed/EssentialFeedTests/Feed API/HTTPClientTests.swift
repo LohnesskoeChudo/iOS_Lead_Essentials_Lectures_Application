@@ -78,6 +78,14 @@ final class HTTPClientTests: XCTestCase {
     
     func test_get_producesErrorOnInvalidResponses() {
         XCTAssertNotNil(errorForStubbed(data: nil, response: nil, error: nil))
+        XCTAssertNotNil(errorForStubbed(data: nil, response: anyHTTPUrlResponse(), error: nil))
+        XCTAssertNotNil(errorForStubbed(data: nil, response: anyNonHTTPUrlResponse(), error: nil))
+        XCTAssertNotNil(errorForStubbed(data: nil, response: anyHTTPUrlResponse(), error: anyNsError()))
+        XCTAssertNotNil(errorForStubbed(data: anyData(), response: anyNonHTTPUrlResponse(), error: anyNsError()))
+        XCTAssertNotNil(errorForStubbed(data: anyData(), response: anyHTTPUrlResponse(), error: anyNsError()))
+        XCTAssertNotNil(errorForStubbed(data: anyData(), response: nil, error: nil))
+        XCTAssertNotNil(errorForStubbed(data: anyData(), response: nil, error: anyNsError()))
+        XCTAssertNotNil(errorForStubbed(data: nil, response: anyHTTPUrlResponse(), error: nil))
     }
     
     // MARK: - Helpers
@@ -109,6 +117,19 @@ final class HTTPClientTests: XCTestCase {
     private func anyNsError() -> NSError {
         NSError(domain: "any error", code: 0)
     }
+    
+    private func anyData() -> Data {
+        Data("any data".utf8)
+    }
+    
+    private func anyHTTPUrlResponse() -> HTTPURLResponse {
+        HTTPURLResponse(url: anyUrl(), mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
+    }
+    
+    private func anyNonHTTPUrlResponse() -> URLResponse {
+        URLResponse(url: anyUrl(), mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
+    }
+    
     
     final class URLProtocolStub: URLProtocol {
         
