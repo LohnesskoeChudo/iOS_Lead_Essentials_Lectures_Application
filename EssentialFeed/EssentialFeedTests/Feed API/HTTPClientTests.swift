@@ -22,7 +22,7 @@ final class URLSessionHTTPClient: HTTPClient {
         session.dataTask(with: url) { data, response, error in
             if let error = error {
                 completion(.failure(error))
-            } else if let data = data, data.count > 0, let response = response as? HTTPURLResponse {
+            } else if let data = data, let response = response as? HTTPURLResponse {
                 completion(.success(data, response))
             } else {
                 completion(.failure(UnexpectedResponse()))
@@ -80,7 +80,6 @@ final class HTTPClientTests: XCTestCase {
     
     func test_get_producesErrorOnInvalidResponses() {
         XCTAssertNotNil(errorForStubbed(data: nil, response: nil, error: nil))
-        XCTAssertNotNil(errorForStubbed(data: nil, response: anyHTTPUrlResponse(), error: nil))
         XCTAssertNotNil(errorForStubbed(data: nil, response: anyNonHTTPUrlResponse(), error: nil))
         XCTAssertNotNil(errorForStubbed(data: nil, response: anyHTTPUrlResponse(), error: anyNsError()))
         XCTAssertNotNil(errorForStubbed(data: anyData(), response: anyNonHTTPUrlResponse(), error: anyNsError()))
@@ -112,6 +111,27 @@ final class HTTPClientTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    func test_get_producesHTTPResultOnHTTPResponseAndNilData() {
+        let httpResponse = anyHTTPUrlResponse()
+        let sut = URLSessionHTTPClient()
+        URLProtocolStub.stub(data: nil, response: httpResponse, error: nil)
+        
+        let exp = expectation(description: "wait for getting from url")
+        sut.get(from: anyUrl()) { response in
+            switch response {
+            case let .success(receivedData, receivedResponse):
+                let emptyData = Data()
+                XCTAssertEqual(receivedData, emptyData)
+                XCTAssertEqual(receivedResponse.statusCode, httpResponse.statusCode)
+                XCTAssertEqual(receivedResponse.url, httpResponse.url)
+            default:
+                XCTFail("Expected to succeed")
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
     // MARK: - Helpers
     
     private func errorForStubbed(data: Data?, response: URLResponse?, error: NSError?, file: StaticString = #filePath, line: UInt = #line) -> Error? {
