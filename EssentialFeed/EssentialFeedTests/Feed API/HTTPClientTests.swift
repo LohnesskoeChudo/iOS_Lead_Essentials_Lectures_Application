@@ -60,22 +60,11 @@ final class HTTPClientTests: XCTestCase {
     
     func test_get_receivesErrorOnError() {
         let expectedError = anyNsError()
-        let sut = URLSessionHTTPClient()
-        URLProtocolStub.stub(error: expectedError)
         
-        let exp = expectation(description: "wait for getting from url")
-        sut.get(from: anyUrl()) { response in
-            switch response {
-            case let .failure(error as NSError):
-                XCTAssertEqual(error.code, expectedError.code)
-                XCTAssertEqual(error.domain, expectedError.domain)
-            default:
-                XCTFail("Expected to get an errror")
-            }
-            exp.fulfill()
-        }
+        let error = errorForStubbed(error: expectedError) as? NSError
         
-        wait(for: [exp], timeout: 1.0)
+        XCTAssertEqual(error?.code, expectedError.code)
+        XCTAssertEqual(error?.domain, expectedError.domain)
     }
     
     func test_get_producesErrorOnInvalidResponses() {
@@ -112,7 +101,7 @@ final class HTTPClientTests: XCTestCase {
     }
     // MARK: - Helpers
     
-    private func errorForStubbed(data: Data?, response: URLResponse?, error: NSError?, file: StaticString = #filePath, line: UInt = #line) -> Error? {
+    private func errorForStubbed(data: Data? = nil, response: URLResponse? = nil, error: NSError?, file: StaticString = #filePath, line: UInt = #line) -> Error? {
         let sut = URLSessionHTTPClient()
         URLProtocolStub.stub(data: data, response: response, error: error)
         
