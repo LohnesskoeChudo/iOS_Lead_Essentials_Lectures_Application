@@ -53,7 +53,7 @@ final class HTTPClientTests: XCTestCase {
     }
     
     func test_get_receivesErrorOnError() {
-        let expectedError = NSError(domain: "any", code: 1)
+        let expectedError = anyNsError()
         let sut = URLSessionHTTPClient()
         URLProtocolStub.stub(error: expectedError)
         
@@ -75,6 +75,10 @@ final class HTTPClientTests: XCTestCase {
     
     private func anyUrl() -> URL {
         URL(string: "http://any-url.com")!
+    }
+    
+    private func anyNsError() -> NSError {
+        NSError(domain: "any error", code: 0)
     }
     
     final class URLProtocolStub: URLProtocol {
