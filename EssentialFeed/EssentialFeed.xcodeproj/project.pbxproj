@@ -477,6 +477,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "VasiliiKletskin-Feed.EssentialFeed";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -506,6 +507,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "VasiliiKletskin-Feed.EssentialFeed";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -522,6 +524,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "VasiliiKletskin-Feed.EssentialFeedTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -537,6 +540,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "VasiliiKletskin-Feed.EssentialFeedTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -551,6 +555,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "VasiliiKletskin-Feed.EssentialFeedAPIEndToEndTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -565,6 +570,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "VasiliiKletskin-Feed.EssentialFeedAPIEndToEndTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
