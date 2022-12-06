@@ -120,24 +120,6 @@ final class HTTPClientTests: XCTestCase {
         return sut
     }
     
-    private func checkForMemoryLeaks(
-        instance: AnyObject,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
-        addTeardownBlock { [weak instance] in
-            XCTAssertNil(instance, "\(String(describing: instance)) supposed to be not nil. Potentially memory leak.", file: file, line: line)
-        }
-    }
-    
-    private func anyUrl() -> URL {
-        URL(string: "http://any-url.com")!
-    }
-    
-    private func anyNsError() -> NSError {
-        NSError(domain: "any error", code: 0)
-    }
-    
     private func anyData() -> Data {
         Data("any data".utf8)
     }

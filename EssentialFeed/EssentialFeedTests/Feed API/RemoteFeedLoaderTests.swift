@@ -17,7 +17,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     }
     
     func test_load_requestsFromProperUrl() {
-        let url = anyUrl
+        let url = anyUrl()
         let (sut, client) = makeSut(url: url)
         
         sut.load() { _ in }
@@ -26,7 +26,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     }
     
     func test_loadTwice_requestsFromProperUrlTwice() {
-        let url = anyUrl
+        let url = anyUrl()
         let (sut, client) = makeSut(url: url)
         
         sut.load() { _ in }
@@ -39,7 +39,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let (sut, client) = makeSut()
         
         assert(sut: sut, equalTo: failure(.connectivity), when: {
-            let clientError = NSError(domain: "any-domain", code: 1)
+            let clientError = anyNsError()
             client.complete(with: clientError)
         })
     }
@@ -78,13 +78,13 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let (sut, client) = makeSut()
         let (item1, jsonItem1) = makeItem(
             id: UUID(),
-            imageUrl: anyUrl
+            imageUrl: anyUrl()
         )
         let (item2, jsonItem2) = makeItem(
             id: UUID(),
             description: "item 2 description",
             location: "item 2 location",
-            imageUrl: anyUrl
+            imageUrl: anyUrl()
         )
         let jsonItems = [jsonItem1, jsonItem2]
         let jsonData = makeJsonData(from: jsonItems)
@@ -96,7 +96,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     func test_load_doesNotReceiveResultAfterSutDealocation() {
         let client = HTTPClientSpy()
-        var sut: RemoteFeedLoader? = .init(url: anyUrl, client: client)
+        var sut: RemoteFeedLoader? = .init(url: anyUrl(), client: client)
         
         var capturedResults = [RemoteFeedLoader.Result]()
         sut?.load { result in
@@ -120,16 +120,6 @@ final class RemoteFeedLoaderTests: XCTestCase {
         checkForMemoryLeaks(instance: sut, file: file, line: line)
         checkForMemoryLeaks(instance: client, file: file, line: line)
         return (sut, client)
-    }
-    
-    private func checkForMemoryLeaks(
-        instance: AnyObject,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
-        addTeardownBlock { [weak instance] in
-            XCTAssertNil(instance, "\(String(describing: instance)) supposed to be not nil. Potentially memory leak.", file: file, line: line)
-        }
     }
     
     private func makeItem(id: UUID, description: String? = nil, location: String? = nil, imageUrl: URL) -> (model: FeedItem, json: [String: Any]) {
@@ -194,10 +184,6 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     private func failure(_ error: RemoteFeedLoader.Error) -> RemoteFeedLoader.Result {
         .failure(error)
-    }
-    
-    private var anyUrl: URL {
-        URL(string: "http://given-url.com")!
     }
     
     class HTTPClientSpy: HTTPClient {
