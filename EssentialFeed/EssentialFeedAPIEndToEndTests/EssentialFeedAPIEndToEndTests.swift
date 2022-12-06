@@ -11,17 +11,30 @@ import EssentialFeed
 final class EssentialFeedAPIEndToEndTests: XCTestCase {
     
     func test_endToEndTestServerGETFeedResult_matchesAccountData() {
+        guard let items = itemsFromServer() else { return }
+        
+        XCTAssertEqual(items[0], expectedItem(at: 0))
+        XCTAssertEqual(items[1], expectedItem(at: 1))
+        XCTAssertEqual(items[2], expectedItem(at: 2))
+        XCTAssertEqual(items[3], expectedItem(at: 3))
+        XCTAssertEqual(items[4], expectedItem(at: 4))
+        XCTAssertEqual(items[5], expectedItem(at: 5))
+        XCTAssertEqual(items[6], expectedItem(at: 6))
+        XCTAssertEqual(items[7], expectedItem(at: 7))
+    }
+    
+    
+    private func itemsFromServer() -> [FeedItem]? {
         let url = URL(string: "https://static1.squarespace.com/static/5891c5b8d1758ec68ef5dbc2/t/5c52cdd0b8a045df091d2fff/1548930512083/feed-case-study-test-api-feed.json")!
         let httpClient = URLSessionHTTPClient(session: .init(configuration: .ephemeral))
         let loader = RemoteFeedLoader(url: url, client: httpClient)
         
-        let exp = expectation(description: "Waiting for capturing from backend.")
+        var receivedItems: [FeedItem]?
+        let exp = expectation(description: "Waiting for capturing from server")
         loader.load { result in
             switch result {
             case let .success(items):
-                for (index, item) in items.enumerated() {
-                    XCTAssertEqual(item, self.expectedItem(at: index))
-                }
+                receivedItems = items
             case let .failure(error):
                 XCTFail("expected to get result but got \(error)")
             }
@@ -29,6 +42,7 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
         }
         
         wait(for: [exp], timeout: 10.0)
+        return receivedItems
     }
     
     
