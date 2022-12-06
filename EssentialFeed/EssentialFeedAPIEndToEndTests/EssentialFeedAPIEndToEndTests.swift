@@ -23,17 +23,14 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
         XCTAssertEqual(items[7], expectedItem(at: 7))
     }
     
+    // MARK: - Helpers
     
     private func itemsFromServer(file: StaticString = #filePath, line: UInt = #line) -> [FeedItem]? {
-        let url = URL(string: "https://static1.squarespace.com/static/5891c5b8d1758ec68ef5dbc2/t/5c52cdd0b8a045df091d2fff/1548930512083/feed-case-study-test-api-feed.json")!
-        let httpClient = URLSessionHTTPClient(session: .init(configuration: .ephemeral))
-        let loader = RemoteFeedLoader(url: url, client: httpClient)
-        checkForMemoryLeaks(instance: loader)
-        checkForMemoryLeaks(instance: httpClient)
+        let sut = makeSut()
         
         var receivedItems: [FeedItem]?
         let exp = expectation(description: "Waiting for capturing from server")
-        loader.load { result in
+        sut.load { result in
             switch result {
             case let .success(items):
                 receivedItems = items
@@ -47,6 +44,14 @@ final class EssentialFeedAPIEndToEndTests: XCTestCase {
         return receivedItems
     }
     
+    private func makeSut() -> RemoteFeedLoader {
+        let url = URL(string: "https://static1.squarespace.com/static/5891c5b8d1758ec68ef5dbc2/t/5c52cdd0b8a045df091d2fff/1548930512083/feed-case-study-test-api-feed.json")!
+        let httpClient = URLSessionHTTPClient(session: .init(configuration: .ephemeral))
+        let loader = RemoteFeedLoader(url: url, client: httpClient)
+        checkForMemoryLeaks(instance: loader)
+        checkForMemoryLeaks(instance: httpClient)
+        return loader
+    }
     
     private func expectedItem(at index: Int) -> FeedItem {
         return FeedItem(
