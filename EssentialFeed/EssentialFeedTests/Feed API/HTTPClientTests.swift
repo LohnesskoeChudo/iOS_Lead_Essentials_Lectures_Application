@@ -163,13 +163,17 @@ final class HTTPClientTests: XCTestCase {
         }
         
         override class func canInit(with request: URLRequest) -> Bool {
-            requestObservation?(request)
             return true
         }
         
         override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
         
         override func startLoading() {
+            if let observation = Self.requestObservation {
+                client?.urlProtocolDidFinishLoading(self)
+                return observation(request)
+            }
+            
             if let data = Self.stub?.data {
                 client?.urlProtocol(self, didLoad: data)
             }
