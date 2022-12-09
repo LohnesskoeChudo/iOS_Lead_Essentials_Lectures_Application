@@ -52,7 +52,7 @@ final class FeedCacheUseCaseTests: XCTestCase {
         XCTAssertEqual(store.deletionRequestsCount, 1)
     }
     
-    func test_save_doesNotTriggerInsertionOnDeletionError() {
+    func test_save_doesNotInsertOnDeletionError() {
         let store = FeedStore()
         let sut = LocalFeedLoader(store: store)
         let items = [uniqueItem(), uniqueItem()]
