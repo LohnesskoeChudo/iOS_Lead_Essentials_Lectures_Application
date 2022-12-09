@@ -22,9 +22,14 @@ final class LocalFeedLoader {
 
 class FeedStore {
     var deletionRequestsCount = 0
+    var insertionRequestCount = 0
     
     func deleteItems() {
         deletionRequestsCount += 1
+    }
+    
+    func completeWith(error: NSError) {
+        
     }
 }
 
@@ -45,6 +50,17 @@ final class FeedCacheUseCaseTests: XCTestCase {
         sut.save(items: items)
         
         XCTAssertEqual(store.deletionRequestsCount, 1)
+    }
+    
+    func test_save_doesNotTriggerInsertionOnDeletionError() {
+        let store = FeedStore()
+        let sut = LocalFeedLoader(store: store)
+        let items = [uniqueItem(), uniqueItem()]
+        
+        sut.save(items: items)
+        store.completeWith(error: anyNsError())
+        
+        XCTAssertEqual(store.insertionRequestCount, 0)
     }
     
     // MARK: - Helpers
