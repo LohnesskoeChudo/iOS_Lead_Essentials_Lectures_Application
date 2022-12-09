@@ -36,15 +36,13 @@ class FeedStore {
 final class FeedCacheUseCaseTests: XCTestCase {
     
     func test_init_doesNotTriggerFeedDeletion() {
-        let store = FeedStore()
-        let _ = LocalFeedLoader(store: store)
+        let (store, _) = makeSut()
         
         XCTAssertEqual(store.deletionRequestsCount, 0)
     }
     
     func test_save_triggersFeedDeletion() {
-        let store = FeedStore()
-        let sut = LocalFeedLoader(store: store)
+        let (store, sut) = makeSut()
         let items = [uniqueItem(), uniqueItem()]
         
         sut.save(items: items)
@@ -53,8 +51,7 @@ final class FeedCacheUseCaseTests: XCTestCase {
     }
     
     func test_save_doesNotInsertOnDeletionError() {
-        let store = FeedStore()
-        let sut = LocalFeedLoader(store: store)
+        let (store, sut) = makeSut()
         let items = [uniqueItem(), uniqueItem()]
         
         sut.save(items: items)
@@ -64,6 +61,12 @@ final class FeedCacheUseCaseTests: XCTestCase {
     }
     
     // MARK: - Helpers
+    
+    private func makeSut() -> (FeedStore, LocalFeedLoader) {
+        let store = FeedStore()
+        let sut = LocalFeedLoader(store: store)
+        return (store, sut)
+    }
     
     private func uniqueItem() -> FeedItem {
         FeedItem(
