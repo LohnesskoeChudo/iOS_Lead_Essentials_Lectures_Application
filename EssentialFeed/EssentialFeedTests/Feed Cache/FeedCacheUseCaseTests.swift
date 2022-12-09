@@ -12,12 +12,14 @@ final class LocalFeedLoader {
     private let store: FeedStore
     private let currentDate: () -> Date
     
+    typealias Result = (Error?) -> Void
+    
     init(store: FeedStore, currentDate: @escaping () -> Date) {
         self.store = store
         self.currentDate = currentDate
     }
     
-    func save(items: [FeedItem], completion: @escaping (Error?) -> Void) {
+    func save(items: [FeedItem], completion: @escaping Result) {
         store.deleteItems() { [unowned self] error in
             completion(error)
             if error == nil {
