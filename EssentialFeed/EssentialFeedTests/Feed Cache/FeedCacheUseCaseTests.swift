@@ -78,18 +78,16 @@ final class FeedCacheUseCaseTests: XCTestCase {
     
     func test_save_triggersFeedDeletion() {
         let (store, sut) = makeSut()
-        let items = [uniqueItem(), uniqueItem()]
         
-        sut.save(items: items) { _ in }
+        sut.save(items: anyItems()) { _ in }
         
         XCTAssertEqual(store.messages, [.deletion])
     }
     
     func test_save_doesNotInsertOnDeletionError() {
         let (store, sut) = makeSut()
-        let items = [uniqueItem(), uniqueItem()]
         
-        sut.save(items: items) { _ in }
+        sut.save(items: anyItems()) { _ in }
         store.completeDeletionWith(error: anyNsError())
         
         XCTAssertEqual(store.messages, [.deletion])
@@ -108,12 +106,11 @@ final class FeedCacheUseCaseTests: XCTestCase {
     
     func test_save_receivesErrorOnDeletionError() {
         let (store, sut) = makeSut()
-        let items = [uniqueItem(), uniqueItem()]
         let error = anyNsError()
         
         let exp = expectation(description: "waiting for save failure")
         var receivedError: NSError?
-        sut.save(items: items) { error in
+        sut.save(items: anyItems()) { error in
             receivedError = error as? NSError
             exp.fulfill()
         }
@@ -125,12 +122,11 @@ final class FeedCacheUseCaseTests: XCTestCase {
     
     func test_save_receivesErrorOnInsertionError() {
         let (store, sut) = makeSut()
-        let items = [uniqueItem(), uniqueItem()]
         let error = anyNsError()
         
         let exp = expectation(description: "waiting for save failure")
         var receivedError: NSError?
-        sut.save(items: items) { error in
+        sut.save(items: anyItems()) { error in
             receivedError = error as? NSError
             exp.fulfill()
         }
@@ -143,11 +139,10 @@ final class FeedCacheUseCaseTests: XCTestCase {
     
     func test_save_returnNoErrorOnInsertionSuccess() {
         let (store, sut) = makeSut()
-        let items = [uniqueItem(), uniqueItem()]
         
         let exp = expectation(description: "waiting for save failure")
         var receivedError: NSError?
-        sut.save(items: items) { error in
+        sut.save(items: anyItems()) { error in
             receivedError = error as? NSError
             exp.fulfill()
         }
@@ -164,6 +159,10 @@ final class FeedCacheUseCaseTests: XCTestCase {
         let store = FeedStore()
         let sut = LocalFeedLoader(store: store, currentDate: dateProvider)
         return (store, sut)
+    }
+    
+    private func anyItems() -> [FeedItem] {
+        [uniqueItem(), uniqueItem(), uniqueItem()]
     }
     
     private func uniqueItem() -> FeedItem {
