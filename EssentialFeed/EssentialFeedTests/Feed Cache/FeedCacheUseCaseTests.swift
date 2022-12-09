@@ -44,7 +44,7 @@ class FeedStore {
         deletionCompletions.append(completion)
     }
     
-    func completeWith(error: NSError, at index: Int = 0) {
+    func completeDeletionWith(error: NSError, at index: Int = 0) {
         deletionCompletions[index](error)
     }
     
@@ -79,7 +79,7 @@ final class FeedCacheUseCaseTests: XCTestCase {
         let items = [uniqueItem(), uniqueItem()]
         
         sut.save(items: items) { _ in }
-        store.completeWith(error: anyNsError())
+        store.completeDeletionWith(error: anyNsError())
         
         XCTAssertEqual(store.messages, [.deletion])
     }
@@ -106,7 +106,7 @@ final class FeedCacheUseCaseTests: XCTestCase {
             receivedError = error as? NSError
             exp.fulfill()
         }
-        store.completeWith(error: error)
+        store.completeDeletionWith(error: error)
         wait(for: [exp], timeout: 1.0)
         
         XCTAssertEqual(receivedError, error)
