@@ -30,20 +30,20 @@ class FeedStore {
     var deletionRequestsCount = 0
     var insertionRequestCount = 0
     
-    var deletionCompletion: ((Error?) -> Void)?
+    var deletionCompletions: [(Error?) -> Void] = []
     var insertedItems: (item: [FeedItem], timestamp: Date)?
     
     func deleteItems(completion: @escaping (Error?) -> Void) {
         deletionRequestsCount += 1
-        deletionCompletion = completion
+        deletionCompletions.append(completion)
     }
     
-    func completeWith(error: NSError) {
-        deletionCompletion?(error)
+    func completeWith(error: NSError, at index: Int = 0) {
+        deletionCompletions[index](error)
     }
     
-    func completeDeletionWithSuccess() {
-        deletionCompletion?(nil)
+    func completeDeletionWithSuccess(at index: Int = 0) {
+        deletionCompletions[index](nil)
     }
     
     func insert(items: [FeedItem], timestamp: Date) {
