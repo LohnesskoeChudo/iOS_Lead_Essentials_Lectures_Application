@@ -30,20 +30,32 @@ final class LocalFeedLoader {
     }
 }
 
-class FeedStore {
+protocol FeedStore {
+    typealias DeletionCompletion = ((Error?) -> Void)
+    typealias InsertionCompletion = ((Error?) -> Void)
     
+    func deleteItems(completion: @escaping (Error?) -> Void)
+    func insert(items: [FeedItem], timestamp: Date, completion: @escaping (Error?) -> Void)
+}
+
+class FeedStoreSpy: FeedStore {
     enum Message: Equatable {
         case deletion
         case insertion(items: [FeedItem], timestamp: Date)
     }
     
-    var deletionCompletions: [(Error?) -> Void] = []
-    var insertionCompletion: [(Error?) -> Void] = []
+    var deletionCompletions: [FeedStore.DeletionCompletion] = []
+    var insertionCompletion: [FeedStore.InsertionCompletion] = []
     var messages: [Message] = []
     
     func deleteItems(completion: @escaping (Error?) -> Void) {
         messages.append(.deletion)
         deletionCompletions.append(completion)
+    }
+    
+    func insert(items: [FeedItem], timestamp: Date, completion: @escaping (Error?) -> Void) {
+        messages.append(.insertion(items: items, timestamp: timestamp))
+        insertionCompletion.append(completion)
     }
     
     func completeDeletionWith(error: NSError, at index: Int = 0) {
@@ -60,11 +72,6 @@ class FeedStore {
     
     func completeInsetionWithSuccess(at index: Int = 0) {
         insertionCompletion[index](nil)
-    }
-    
-    func insert(items: [FeedItem], timestamp: Date, completion: @escaping (Error?) -> Void) {
-        messages.append(.insertion(items: items, timestamp: timestamp))
-        insertionCompletion.append(completion)
     }
 }
 
@@ -147,8 +154,8 @@ final class FeedCacheUseCaseTests: XCTestCase {
         XCTAssertEqual(receivedError, error, file: file, line: line)
     }
     
-    private func makeSut(dateProvider: @escaping (() -> Date) = Date.init) -> (FeedStore, LocalFeedLoader) {
-        let store = FeedStore()
+    private func makeSut(dateProvider: @escaping (() -> Date) = Date.init) -> (FeedStoreSpy, LocalFeedLoader) {
+        let store = FeedStoreSpy()
         let sut = LocalFeedLoader(store: store, currentDate: dateProvider)
         return (store, sut)
     }
