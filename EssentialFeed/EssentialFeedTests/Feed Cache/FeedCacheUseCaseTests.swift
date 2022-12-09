@@ -157,6 +157,8 @@ final class FeedCacheUseCaseTests: XCTestCase {
     private func makeSut(dateProvider: @escaping (() -> Date) = Date.init) -> (FeedStoreSpy, LocalFeedLoader) {
         let store = FeedStoreSpy()
         let sut = LocalFeedLoader(store: store, currentDate: dateProvider)
+        checkForMemoryLeaks(instance: sut)
+        checkForMemoryLeaks(instance: store)
         return (store, sut)
     }
     
