@@ -8,36 +8,6 @@
 import XCTest
 import EssentialFeed
 
-final class LocalFeedLoader {
-    private let store: FeedStore
-    private let currentDate: () -> Date
-    
-    typealias Result = (Error?) -> Void
-    
-    init(store: FeedStore, currentDate: @escaping () -> Date) {
-        self.store = store
-        self.currentDate = currentDate
-    }
-    
-    func save(items: [FeedItem], completion: @escaping Result) {
-        store.deleteItems() { [unowned self] error in
-            if error == nil {
-                store.insert(items: items, timestamp: currentDate(), completion: completion)
-            } else {
-                completion(error)
-            }
-        }
-    }
-}
-
-protocol FeedStore {
-    typealias DeletionCompletion = ((Error?) -> Void)
-    typealias InsertionCompletion = ((Error?) -> Void)
-    
-    func deleteItems(completion: @escaping (Error?) -> Void)
-    func insert(items: [FeedItem], timestamp: Date, completion: @escaping (Error?) -> Void)
-}
-
 class FeedStoreSpy: FeedStore {
     enum Message: Equatable {
         case deletion
