@@ -8,45 +8,7 @@
 import XCTest
 import EssentialFeed
 
-class FeedStoreSpy: FeedStore {
-    enum Message: Equatable {
-        case deletion
-        case insertion(items: [FeedItem], timestamp: Date)
-    }
-    
-    var deletionCompletions: [FeedStore.DeletionCompletion] = []
-    var insertionCompletion: [FeedStore.InsertionCompletion] = []
-    var messages: [Message] = []
-    
-    func deleteItems(completion: @escaping (Error?) -> Void) {
-        messages.append(.deletion)
-        deletionCompletions.append(completion)
-    }
-    
-    func insert(items: [FeedItem], timestamp: Date, completion: @escaping (Error?) -> Void) {
-        messages.append(.insertion(items: items, timestamp: timestamp))
-        insertionCompletion.append(completion)
-    }
-    
-    func completeDeletionWith(error: NSError, at index: Int = 0) {
-        deletionCompletions[index](error)
-    }
-    
-    func completeInsertionWith(error: NSError, at index: Int = 0) {
-        insertionCompletion[index](error)
-    }
-    
-    func completeDeletionWithSuccess(at index: Int = 0) {
-        deletionCompletions[index](nil)
-    }
-    
-    func completeInsetionWithSuccess(at index: Int = 0) {
-        insertionCompletion[index](nil)
-    }
-}
-
 final class FeedCacheUseCaseTests: XCTestCase {
-    
     func test_init_doesNotTriggerFeedDeletion() {
         let (store, _) = makeSut()
         
@@ -143,5 +105,42 @@ final class FeedCacheUseCaseTests: XCTestCase {
             location: "any location",
             imageUrl: anyUrl()
         )
+    }
+    
+    final class FeedStoreSpy: FeedStore {
+        enum Message: Equatable {
+            case deletion
+            case insertion(items: [FeedItem], timestamp: Date)
+        }
+        
+        var deletionCompletions: [FeedStore.DeletionCompletion] = []
+        var insertionCompletion: [FeedStore.InsertionCompletion] = []
+        var messages: [Message] = []
+        
+        func deleteItems(completion: @escaping (Error?) -> Void) {
+            messages.append(.deletion)
+            deletionCompletions.append(completion)
+        }
+        
+        func insert(items: [FeedItem], timestamp: Date, completion: @escaping (Error?) -> Void) {
+            messages.append(.insertion(items: items, timestamp: timestamp))
+            insertionCompletion.append(completion)
+        }
+        
+        func completeDeletionWith(error: NSError, at index: Int = 0) {
+            deletionCompletions[index](error)
+        }
+        
+        func completeInsertionWith(error: NSError, at index: Int = 0) {
+            insertionCompletion[index](error)
+        }
+        
+        func completeDeletionWithSuccess(at index: Int = 0) {
+            deletionCompletions[index](nil)
+        }
+        
+        func completeInsetionWithSuccess(at index: Int = 0) {
+            insertionCompletion[index](nil)
+        }
     }
 }
