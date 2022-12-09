@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F727CD592943AC890044A877 /* FeedCacheUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F727CD582943AC890044A877 /* FeedCacheUseCaseTests.swift */; };
+		F727CD5C2943C2DB0044A877 /* LocalFeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F727CD5B2943C2DB0044A877 /* LocalFeedLoader.swift */; };
+		F727CD5E2943C3110044A877 /* FeedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F727CD5D2943C3110044A877 /* FeedStore.swift */; };
 		F7627AD9293E9955004613DE /* URLSessionHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7627AD8293E9955004613DE /* URLSessionHTTPClient.swift */; };
 		F793C778293C784A0026E2AB /* HTTPFeedResponseMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F793C777293C784A0026E2AB /* HTTPFeedResponseMapper.swift */; };
 		F7B0A2002938CFEA005CD21A /* EssentialFeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7B0A1F72938CFEA005CD21A /* EssentialFeed.framework */; };
@@ -40,6 +43,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F727CD582943AC890044A877 /* FeedCacheUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCacheUseCaseTests.swift; sourceTree = "<group>"; };
+		F727CD5B2943C2DB0044A877 /* LocalFeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFeedLoader.swift; sourceTree = "<group>"; };
+		F727CD5D2943C3110044A877 /* FeedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStore.swift; sourceTree = "<group>"; };
 		F7627AD8293E9955004613DE /* URLSessionHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClient.swift; sourceTree = "<group>"; };
 		F793C777293C784A0026E2AB /* HTTPFeedResponseMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPFeedResponseMapper.swift; sourceTree = "<group>"; };
 		F7B0A1F72938CFEA005CD21A /* EssentialFeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EssentialFeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,6 +88,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F727CD572943AC6F0044A877 /* Feed Cache */ = {
+			isa = PBXGroup;
+			children = (
+				F727CD582943AC890044A877 /* FeedCacheUseCaseTests.swift */,
+			);
+			path = "Feed Cache";
+			sourceTree = "<group>";
+		};
+		F727CD5A2943C2C20044A877 /* Feed Cache */ = {
+			isa = PBXGroup;
+			children = (
+				F727CD5B2943C2DB0044A877 /* LocalFeedLoader.swift */,
+				F727CD5D2943C3110044A877 /* FeedStore.swift */,
+			);
+			path = "Feed Cache";
+			sourceTree = "<group>";
+		};
 		F793C779293C7B290026E2AB /* Feed API */ = {
 			isa = PBXGroup;
 			children = (
@@ -115,6 +138,7 @@
 		F7B0A1F92938CFEA005CD21A /* EssentialFeed */ = {
 			isa = PBXGroup;
 			children = (
+				F727CD5A2943C2C20044A877 /* Feed Cache */,
 				F7B0A2162938F4A4005CD21A /* Feed API */,
 				F7B0A2132938D0A6005CD21A /* Feed Feature */,
 			);
@@ -124,6 +148,7 @@
 		F7B0A2032938CFEA005CD21A /* EssentialFeedTests */ = {
 			isa = PBXGroup;
 			children = (
+				F727CD572943AC6F0044A877 /* Feed Cache */,
 				F793C779293C7B290026E2AB /* Feed API */,
 			);
 			path = EssentialFeedTests;
@@ -232,7 +257,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1400;
-				LastUpgradeCheck = 1400;
+				LastUpgradeCheck = 1410;
 				TargetAttributes = {
 					F7B0A1F62938CFEA005CD21A = {
 						CreatedOnToolsVersion = 14.0.1;
@@ -298,6 +323,8 @@
 				F7B0A2122938D043005CD21A /* FeedLoader.swift in Sources */,
 				F793C778293C784A0026E2AB /* HTTPFeedResponseMapper.swift in Sources */,
 				F7B0A2182938F4C6005CD21A /* RemoteFeedLoader.swift in Sources */,
+				F727CD5E2943C3110044A877 /* FeedStore.swift in Sources */,
+				F727CD5C2943C2DB0044A877 /* LocalFeedLoader.swift in Sources */,
 				F7B0A21A2938F4CD005CD21A /* HTTPClient.swift in Sources */,
 				F7B0A2102938D00F005CD21A /* FeedItem.swift in Sources */,
 				F7627AD9293E9955004613DE /* URLSessionHTTPClient.swift in Sources */,
@@ -310,6 +337,7 @@
 			files = (
 				F7DAC871293D9B6500F1C9ED /* HTTPClientTests.swift in Sources */,
 				F7E5A295293F95700074FF0A /* Helpers.swift in Sources */,
+				F727CD592943AC890044A877 /* FeedCacheUseCaseTests.swift in Sources */,
 				F7B0A2152938EC31005CD21A /* LoadFeedFromRemoteUseCaseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -373,6 +401,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -436,6 +465,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -465,6 +495,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -495,6 +526,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -523,6 +555,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
@@ -539,6 +572,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
@@ -554,6 +588,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
@@ -569,6 +604,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.0;
