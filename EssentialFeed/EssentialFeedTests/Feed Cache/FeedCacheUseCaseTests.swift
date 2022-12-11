@@ -71,7 +71,7 @@ final class FeedCacheUseCaseTests: XCTestCase {
         })
     }
     
-    func test_save_doesNotReturnErrorOnDeletionErrorWithSutDeallocation() {
+    func test_save_doesNotCallCompletionOnDeletionErrorWithSutDeallocation() {
         let store = FeedStoreSpy()
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
         
