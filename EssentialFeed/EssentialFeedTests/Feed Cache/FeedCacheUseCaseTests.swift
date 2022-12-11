@@ -85,6 +85,21 @@ final class FeedCacheUseCaseTests: XCTestCase {
         XCTAssert(receivedResult == nil)
     }
     
+    func test_save_doesNotCallCompletionOnInsertionErrorWhenSutHasBeenDeallocated() {
+        let store = FeedStoreSpy()
+        var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
+        
+        var receivedResult: LocalFeedLoader.Result?
+        sut?.save(items: anyItems()) { result in
+            receivedResult = result
+        }
+        store.completeDeletionWithSuccess()
+        sut = nil
+        store.completeInsertionWith(error: anyNsError())
+        
+        XCTAssert(receivedResult == nil)
+    }
+    
     // MARK: - Helpers
     
     private func expect(sut: LocalFeedLoader, toReceive error: NSError?, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
