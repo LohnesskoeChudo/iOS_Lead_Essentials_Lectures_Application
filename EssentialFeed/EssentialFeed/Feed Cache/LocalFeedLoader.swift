@@ -11,17 +11,18 @@ public final class LocalFeedLoader {
     private let store: FeedStore
     private let currentDate: () -> Date
     
-    public typealias Result = (Error?) -> Void
+    public typealias Result = Error?
     
     public init(store: FeedStore, currentDate: @escaping () -> Date) {
         self.store = store
         self.currentDate = currentDate
     }
     
-    public func save(items: [FeedItem], completion: @escaping Result) {
-        store.deleteItems() { [unowned self] error in
+    public func save(items: [FeedItem], completion: @escaping (Result) -> Void) {
+        store.deleteItems() { [weak self] error in
+            guard let self = self else { return }
             if error == nil {
-                store.insert(items: items, timestamp: currentDate(), completion: completion)
+                self.store.insert(items: items, timestamp: self.currentDate(), completion: completion)
             } else {
                 completion(error)
             }

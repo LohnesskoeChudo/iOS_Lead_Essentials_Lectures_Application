@@ -71,6 +71,20 @@ final class FeedCacheUseCaseTests: XCTestCase {
         })
     }
     
+    func test_save_doesNotReturnErrorOnDeletionErrorWithSutDeallocation() {
+        let store = FeedStoreSpy()
+        var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
+        
+        var receivedResult: LocalFeedLoader.Result?
+        sut?.save(items: anyItems()) { result in
+            receivedResult = result
+        }
+        sut = nil
+        store.completeDeletionWith(error: anyNsError())
+        
+        XCTAssert(receivedResult == nil)
+    }
+    
     // MARK: - Helpers
     
     private func expect(sut: LocalFeedLoader, toReceive error: NSError?, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
