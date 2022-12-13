@@ -76,11 +76,11 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     
     func test_load_receivesFeedItemsOnNonEmptyJSONAndOkCode() {
         let (sut, client) = makeSut()
-        let (item1, jsonItem1) = makeItem(
+        let (image1, jsonItem1) = makeItem(
             id: UUID(),
             imageUrl: anyUrl()
         )
-        let (item2, jsonItem2) = makeItem(
+        let (image2, jsonItem2) = makeItem(
             id: UUID(),
             description: "item 2 description",
             location: "item 2 location",
@@ -89,7 +89,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         let jsonItems = [jsonItem1, jsonItem2]
         let jsonData = makeJsonData(from: jsonItems)
         
-        assert(sut: sut, equalTo: .success([item1, item2]), when: {
+        assert(sut: sut, equalTo: .success([image1, image2]), when: {
             client.complete(withCode: 200, data: jsonData)
         })
     }
@@ -122,20 +122,20 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         return (sut, client)
     }
     
-    private func makeItem(id: UUID, description: String? = nil, location: String? = nil, imageUrl: URL) -> (model: FeedItem, json: [String: Any]) {
-        let item = FeedItem(
+    private func makeItem(id: UUID, description: String? = nil, location: String? = nil, imageUrl: URL) -> (model: FeedImage, json: [String: Any]) {
+        let image = FeedImage(
             id: id,
             description: description,
             location: location,
-            imageUrl: imageUrl
+            url: imageUrl
         )
         let jsonItem = [
-            "id": item.id.uuidString,
-            "description": item.description,
-            "location": item.location,
-            "image": item.imageUrl.absoluteString
+            "id": image.id.uuidString,
+            "description": image.description,
+            "location": image.location,
+            "image": image.url.absoluteString
         ].compactMapValues { $0 }
-        return (item, jsonItem)
+        return (image, jsonItem)
     }
     
     private func makeJsonData(from jsonItems: [[String: Any]]) -> Data {
