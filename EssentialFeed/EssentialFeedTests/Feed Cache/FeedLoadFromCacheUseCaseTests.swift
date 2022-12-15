@@ -44,8 +44,9 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
     
     func test_load_receivesFeedOnLessThan7DaysOldCache() {
         let feed = anyFeed()
-        let lessThan7DaysOldTimestamp = Date().adding(days: 7).adding(seconds: -1)
-        let (store, sut) = makeSut()
+        let currentDate = Date()
+        let lessThan7DaysOldTimestamp = currentDate.adding(days: -7).adding(seconds: 1)
+        let (store, sut) = makeSut(dateProvider: { currentDate })
         
         expect(sut: sut, result: .success(feed.models), on: {
             store.completeRetrievalWith(localFeed: feed.locals, timestamp: lessThan7DaysOldTimestamp)
