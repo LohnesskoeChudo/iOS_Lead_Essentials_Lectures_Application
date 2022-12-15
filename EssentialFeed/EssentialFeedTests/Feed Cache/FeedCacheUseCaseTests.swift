@@ -75,7 +75,7 @@ final class FeedCacheUseCaseTests: XCTestCase {
         let store = FeedStoreSpy()
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
         
-        var receivedResult: LocalFeedLoader.Result?
+        var receivedResult: LocalFeedLoader.SaveResult?
         sut?.save(feed: anyFeed().models) { result in
             receivedResult = result
         }
@@ -89,7 +89,7 @@ final class FeedCacheUseCaseTests: XCTestCase {
         let store = FeedStoreSpy()
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
         
-        var receivedResult: LocalFeedLoader.Result?
+        var receivedResult: LocalFeedLoader.SaveResult?
         sut?.save(feed: anyFeed().models) { result in
             receivedResult = result
         }
