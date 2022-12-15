@@ -31,11 +31,16 @@ public final class LocalFeedLoader {
     }
     
     public func load(completion: @escaping (LoadResult) -> Void) {
-        store.retrieve() { error in
-            if let error = error {
-                completion(.failure(error))
-            } else {
+        store.retrieve() { [unowned self] result in
+            switch result {
+            case let .found(localFeed, timestamp):
+                if self.validate(timestamp: timestamp) {
+                    completion(.success(localFeed.models))
+                }
+            case .empty:
                 completion(.success([]))
+            case let .failure(error):
+                completion(.failure(error))
             }
         }
     }
@@ -46,10 +51,22 @@ public final class LocalFeedLoader {
             completion(error)
         }
     }
+    
+    private func validate(timestamp: Date) -> Bool {
+        let calendar = Calendar(identifier: .gregorian)
+        guard let maxAge = calendar.date(byAdding: .day, value: 7, to: timestamp) else { return false }
+        return currentDate() < maxAge
+    }
 }
 
 extension Array where Element == FeedImage {
     var local: [LocalFeedImage] {
         map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
+    }
+}
+
+extension Array where Element == LocalFeedImage {
+    var models: [FeedImage] {
+        map { FeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
     }
 }

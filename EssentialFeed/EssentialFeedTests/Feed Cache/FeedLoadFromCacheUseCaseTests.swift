@@ -7,6 +7,7 @@
 
 import XCTest
 import EssentialFeed
+import Foundation
 
 final class FeedLoadFromCacheUseCaseTests: XCTestCase {
     
@@ -41,6 +42,16 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
         })
     }
     
+    func test_load_receivesFeedOnLessThan7DaysOldCache() {
+        let feed = anyFeed()
+        let lessThan7DaysOldTimestamp = Date().adding(days: 7).adding(seconds: -1)
+        let (store, sut) = makeSut()
+        
+        expect(sut: sut, result: .success(feed.models), on: {
+            store.completeRetrievalWith(localFeed: feed.locals, timestamp: lessThan7DaysOldTimestamp)
+        })
+    }
+    
     // MARK: - Helpers
     private func makeSut(dateProvider: @escaping (() -> Date) = Date.init) -> (FeedStoreSpy, LocalFeedLoader) {
         let store = FeedStoreSpy()
@@ -67,5 +78,31 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
         action()
         
         wait(for: [exp], timeout: 1.0)
+    }
+    
+    private func anyFeed() -> (models: [FeedImage], locals: [LocalFeedImage]) {
+        let models = [uniqueImage(), uniqueImage(), uniqueImage()]
+        let locals = models.map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
+        return (models, locals)
+    }
+    
+    private func uniqueImage() -> FeedImage {
+        FeedImage(
+            id: UUID(),
+            description: "any description",
+            location: "any location",
+            url: anyUrl()
+        )
+    }
+}
+
+extension Date {
+    func adding(days: Int) -> Date {
+        let calendar = Calendar(identifier: .gregorian)
+        return calendar.date(byAdding: .day, value: days, to: self) ?? Date()
+    }
+    
+    func adding(seconds: TimeInterval) -> Date {
+        self + seconds
     }
 }
