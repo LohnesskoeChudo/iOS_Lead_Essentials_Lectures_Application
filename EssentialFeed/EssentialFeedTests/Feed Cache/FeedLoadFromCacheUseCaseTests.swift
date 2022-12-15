@@ -53,6 +53,16 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
         })
     }
     
+    func test_load_receivesEmptyFeedOn7DaysOldCache() {
+        let currentDate = Date()
+        let a7DaysOldTimestamp = currentDate.adding(days: -7)
+        let (store, sut) = makeSut(dateProvider: { currentDate })
+        
+        expect(sut: sut, result: .success([]), on: {
+            store.completeRetrievalWith(localFeed: anyFeed().locals, timestamp: a7DaysOldTimestamp)
+        })
+    }
+    
     // MARK: - Helpers
     private func makeSut(dateProvider: @escaping (() -> Date) = Date.init) -> (FeedStoreSpy, LocalFeedLoader) {
         let store = FeedStoreSpy()
