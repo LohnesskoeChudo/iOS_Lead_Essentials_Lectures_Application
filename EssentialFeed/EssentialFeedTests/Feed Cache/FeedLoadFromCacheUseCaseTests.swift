@@ -28,37 +28,17 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
         let (store, sut) = makeSut()
         let error = anyNsError()
         
-        let exp = expectation(description: "waiting for retrieval error")
-        sut.load() { result in
-            switch result {
-            case let .failure(receivedError):
-                XCTAssertEqual(receivedError as NSError, error)
-            default:
-                XCTFail("Expected failure, received: \(result)")
-            }
-            exp.fulfill()
-        }
-        store.completeRetrievalWith(error: error)
-        
-        wait(for: [exp], timeout: 1.0)
+        expect(sut: sut, result: .failure(error), on: {
+            store.completeRetrievalWith(error: error)
+        })
     }
     
     func test_load_receivesEmptyFeedOnEmptyCache() {
         let (store, sut) = makeSut()
         
-        let exp = expectation(description: "waiting for retrieval error")
-        sut.load() { result in
-            switch result {
-            case let .success(items):
-                XCTAssertEqual(items, [])
-            default:
-                XCTFail("Expected success, received: \(result)")
-            }
-            exp.fulfill()
-        }
-        store.completeRetrievalWithEmptyCache()
-        
-        wait(for: [exp], timeout: 1.0)
+        expect(sut: sut, result: .success([]), on: {
+            store.completeRetrievalWithEmptyCache()
+        })
     }
     
     // MARK: - Helpers
@@ -68,5 +48,24 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
         checkForMemoryLeaks(instance: sut)
         checkForMemoryLeaks(instance: store)
         return (store, sut)
+    }
+    
+    private func expect(sut: LocalFeedLoader, result expectedResult: LocalFeedLoader.LoadResult, on action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+        
+        let exp = expectation(description: "waiting for load")
+        sut.load() { result in
+            switch (result, expectedResult) {
+            case let (.success(items), .success(expectedItems)):
+                XCTAssertEqual(items, expectedItems, file: file, line: line)
+            case let (.failure(error), .failure(expectedError)):
+                XCTAssertEqual(error as NSError, expectedError as NSError, file: file, line: line)
+            default:
+                XCTFail("Expected \(expectedResult), received: \(result)")
+            }
+            exp.fulfill()
+        }
+        action()
+        
+        wait(for: [exp], timeout: 1.0)
     }
 }
