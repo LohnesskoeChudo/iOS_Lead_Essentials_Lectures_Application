@@ -28,10 +28,14 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
         let (store, sut) = makeSut()
         let error = anyNsError()
         
-        var receivedError: NSError?
         let exp = expectation(description: "waiting for retrieval error")
-        sut.load() { error in
-            receivedError = error as? NSError
+        sut.load() { result in
+            switch result {
+            case let .failure(receivedError):
+                XCTAssertEqual(receivedError as NSError, error)
+            default:
+                XCTFail("Expected failure, received: \(result)")
+            }
             exp.fulfill()
         }
         store.completeRetrievalWith(error: error)
