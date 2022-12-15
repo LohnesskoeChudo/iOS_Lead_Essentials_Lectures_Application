@@ -41,7 +41,24 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
         store.completeRetrievalWith(error: error)
         
         wait(for: [exp], timeout: 1.0)
-        XCTAssertEqual(receivedError, error)
+    }
+    
+    func test_load_receivesEmptyFeedOnEmptyCache() {
+        let (store, sut) = makeSut()
+        
+        let exp = expectation(description: "waiting for retrieval error")
+        sut.load() { result in
+            switch result {
+            case let .success(items):
+                XCTAssertEqual(items, [])
+            default:
+                XCTFail("Expected success, received: \(result)")
+            }
+            exp.fulfill()
+        }
+        store.completeRetrievalWithEmptyCache()
+        
+        wait(for: [exp], timeout: 1.0)
     }
     
     // MARK: - Helpers
