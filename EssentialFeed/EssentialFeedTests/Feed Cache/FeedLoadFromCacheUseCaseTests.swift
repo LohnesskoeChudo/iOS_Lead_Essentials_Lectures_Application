@@ -10,7 +10,6 @@ import EssentialFeed
 import Foundation
 
 final class FeedLoadFromCacheUseCaseTests: XCTestCase {
-    
     func test_init_doesNotHaveSideEffects() {
         let (store, _) = makeSut()
         
@@ -56,6 +55,16 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
     func test_load_receivesEmptyFeedOn7DaysOldCache() {
         let currentDate = Date()
         let a7DaysOldTimestamp = currentDate.adding(days: -7)
+        let (store, sut) = makeSut(dateProvider: { currentDate })
+        
+        expect(sut: sut, result: .success([]), on: {
+            store.completeRetrievalWith(localFeed: anyFeed().locals, timestamp: a7DaysOldTimestamp)
+        })
+    }
+    
+    func test_load_receivesEmptyFeedOnMoreThan7DaysOldCache() {
+        let currentDate = Date()
+        let a7DaysOldTimestamp = currentDate.adding(days: -7).adding(seconds: -1)
         let (store, sut) = makeSut(dateProvider: { currentDate })
         
         expect(sut: sut, result: .success([]), on: {
