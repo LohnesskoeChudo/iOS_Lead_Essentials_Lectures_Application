@@ -35,9 +35,7 @@ extension LocalFeedLoader: FeedLoader {
                 completion(.failure(error))
             case let .found(localFeed, timestamp) where self.validate(timestamp: timestamp):
                 completion(.success(localFeed.models))
-            case .found:
-                completion(.success([]))
-            case .empty:
+            case .found, .empty:
                 completion(.success([]))
             }
         }
