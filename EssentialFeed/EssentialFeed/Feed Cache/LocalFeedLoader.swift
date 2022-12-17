@@ -10,6 +10,7 @@ import Foundation
 public final class LocalFeedLoader {
     private let store: FeedStore
     private let currentDate: () -> Date
+    private let calendar = Calendar(identifier: .gregorian)
     
     public init(store: FeedStore, currentDate: @escaping () -> Date) {
         self.store = store
@@ -17,7 +18,6 @@ public final class LocalFeedLoader {
     }
     
     private func validate(timestamp: Date) -> Bool {
-        let calendar = Calendar(identifier: .gregorian)
         guard let maxAge = calendar.date(byAdding: .day, value: 7, to: timestamp) else { return false }
         return currentDate() < maxAge
     }
