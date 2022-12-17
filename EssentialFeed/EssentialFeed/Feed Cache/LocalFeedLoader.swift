@@ -51,12 +51,11 @@ public final class LocalFeedLoader {
     public func validate() {
         store.retrieve { [unowned self] result in
             switch result {
-            case .empty:
-                break
-            default: self.store.deleteFeed { _ in }
+            case .failure:
+                self.store.deleteFeed { _ in }
+            default: break
             }
         }
-        
     }
     
     private func insert(feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
