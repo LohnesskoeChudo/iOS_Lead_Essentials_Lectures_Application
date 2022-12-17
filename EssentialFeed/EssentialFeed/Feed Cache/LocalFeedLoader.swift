@@ -36,7 +36,6 @@ public final class LocalFeedLoader {
             
             switch result {
             case let .failure(error):
-                self.store.deleteFeed { _ in }
                 completion(.failure(error))
             case let .found(localFeed, timestamp) where self.validate(timestamp: timestamp):
                 completion(.success(localFeed.models))
@@ -47,6 +46,11 @@ public final class LocalFeedLoader {
                 completion(.success([]))
             }
         }
+    }
+    
+    public func validate() {
+        store.retrieve { _ in }
+        store.deleteFeed { _ in }
     }
     
     private func insert(feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
