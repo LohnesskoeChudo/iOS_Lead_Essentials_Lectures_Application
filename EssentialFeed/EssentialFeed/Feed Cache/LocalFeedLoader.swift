@@ -49,8 +49,14 @@ public final class LocalFeedLoader {
     }
     
     public func validate() {
-        store.retrieve { _ in }
-        store.deleteFeed { _ in }
+        store.retrieve { [unowned self] result in
+            switch result {
+            case .empty:
+                break
+            default: self.store.deleteFeed { _ in }
+            }
+        }
+        
     }
     
     private func insert(feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
