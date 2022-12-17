@@ -48,9 +48,11 @@ public final class LocalFeedLoader {
     }
     
     public func validate() {
-        store.retrieve { [unowned self] result in
+        store.retrieve { [weak self] result in
+            guard let self = self else { return }
+            
             switch result {
-            case let .found(_, timestamp) where !validate(timestamp: timestamp):
+            case let .found(_, timestamp) where !self.validate(timestamp: timestamp):
                 self.store.deleteFeed { _ in }
             case .failure:
                 self.store.deleteFeed { _ in }
