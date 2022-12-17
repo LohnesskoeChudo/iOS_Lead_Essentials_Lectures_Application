@@ -123,6 +123,18 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [.retrieve, .deletion])
     }
     
+    func test_load_doesNotCallbackWhenSutDeallocated() {
+        let store = FeedStoreSpy()
+        var sut: LocalFeedLoader? = .init(store: store, currentDate: Date.init)
+        
+        var result: LocalFeedLoader.LoadResult?
+        sut?.load { receivedResult in result = receivedResult }
+        sut = nil
+        store.completeRetrievalWith(error: anyNsError())
+        
+        XCTAssertNil(result)
+    }
+    
     // MARK: - Helpers
     private func makeSut(dateProvider: @escaping (() -> Date) = Date.init) -> (FeedStoreSpy, LocalFeedLoader) {
         let store = FeedStoreSpy()
