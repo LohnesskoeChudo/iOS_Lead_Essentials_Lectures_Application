@@ -101,9 +101,3 @@ extension Date {
         return calendar.date(byAdding: .day, value: days, to: self) ?? Date()
     }
 }
-    
-extension Date {
-    func adding(seconds: TimeInterval) -> Date {
-        self + seconds
-    }
-}

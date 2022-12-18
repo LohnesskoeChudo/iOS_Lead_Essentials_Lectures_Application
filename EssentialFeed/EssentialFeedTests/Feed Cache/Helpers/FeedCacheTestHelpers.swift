@@ -22,3 +22,9 @@ func uniqueImage() -> FeedImage {
         url: anyUrl()
     )
 }
+
+extension Date {
+    func adding(seconds: TimeInterval) -> Date {
+        self + seconds
+    }
+}
