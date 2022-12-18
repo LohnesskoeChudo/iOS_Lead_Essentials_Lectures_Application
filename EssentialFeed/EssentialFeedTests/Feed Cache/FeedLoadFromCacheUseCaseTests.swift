@@ -163,14 +163,3 @@ final class FeedLoadFromCacheUseCaseTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
 }
-
-extension Date {
-    func adding(days: Int) -> Date {
-        let calendar = Calendar(identifier: .gregorian)
-        return calendar.date(byAdding: .day, value: days, to: self) ?? Date()
-    }
-    
-    func adding(seconds: TimeInterval) -> Date {
-        self + seconds
-    }
-}

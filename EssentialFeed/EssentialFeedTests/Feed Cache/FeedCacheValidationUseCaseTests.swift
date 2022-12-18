@@ -88,3 +88,14 @@ final class FeedCacheValidationUseCaseTests: XCTestCase {
         return (store, sut)
     }
 }
+
+extension Date {
+    func adding(days: Int) -> Date {
+        let calendar = Calendar(identifier: .gregorian)
+        return calendar.date(byAdding: .day, value: days, to: self) ?? Date()
+    }
+    
+    func adding(seconds: TimeInterval) -> Date {
+        self + seconds
+    }
+}
