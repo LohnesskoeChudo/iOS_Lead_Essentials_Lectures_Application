@@ -7,19 +7,24 @@
 
 import Foundation
 
+enum FeedCacheValidationPolicy {
+    static private let calendar = Calendar(identifier: .gregorian)
+    
+    static private var cacheMaxAgeInDays: Int { 7 }
+    
+    static func validate(date: Date, against timestamp: Date) -> Bool {
+        guard let maxAge = calendar.date(byAdding: .day, value: cacheMaxAgeInDays, to: timestamp) else { return false }
+        return date < maxAge
+    }
+}
+
 public final class LocalFeedLoader {
     private let store: FeedStore
     private let currentDate: () -> Date
-    private let calendar = Calendar(identifier: .gregorian)
     
     public init(store: FeedStore, currentDate: @escaping () -> Date) {
         self.store = store
         self.currentDate = currentDate
-    }
-    
-    private func validate(timestamp: Date) -> Bool {
-        guard let maxAge = calendar.date(byAdding: .day, value: 7, to: timestamp) else { return false }
-        return currentDate() < maxAge
     }
 }
 
@@ -33,7 +38,7 @@ extension LocalFeedLoader: FeedLoader {
             switch result {
             case let .failure(error):
                 completion(.failure(error))
-            case let .found(localFeed, timestamp) where self.validate(timestamp: timestamp):
+            case let .found(localFeed, timestamp) where FeedCacheValidationPolicy.validate(date: self.currentDate(), against: timestamp):
                 completion(.success(localFeed.models))
             case .found, .empty:
                 completion(.success([]))
@@ -70,7 +75,7 @@ extension LocalFeedLoader {
             guard let self = self else { return }
             
             switch result {
-            case let .found(_, timestamp) where !self.validate(timestamp: timestamp):
+            case let .found(_, timestamp) where !FeedCacheValidationPolicy.validate(date: self.currentDate(), against: timestamp):
                 self.store.deleteFeed { _ in }
             case .failure:
                 self.store.deleteFeed { _ in }
