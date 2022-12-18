@@ -60,9 +60,6 @@ final class CodableFeedStoreTests: XCTestCase {
         
         let exp = expectation(description: "Waiting for retrival")
         sut.insert(feed: feed, timestamp: timestamp) { insertionResult in
-            guard insertionResult == nil else {
-                return XCTFail("Expected 'insert' to success")
-            }
             sut.retrieve { retrivalResult in
                 switch retrivalResult {
                 case let .found(receivedFeed, receivedTimestamp):
