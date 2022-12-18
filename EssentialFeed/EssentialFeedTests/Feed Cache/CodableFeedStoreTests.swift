@@ -35,7 +35,11 @@ final class CodableFeedStore {
         }
     }
     
-    private lazy var storeUrl = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("CodableFeedStore.store")
+    private let storeUrl: URL
+    
+    init(storeUrl: URL) {
+        self.storeUrl = storeUrl
+    }
     
     func retrieve(completion: @escaping FeedStore.RetrievalCompletion) {
         if let data = try? Data(contentsOf: storeUrl) {
@@ -58,8 +62,7 @@ final class CodableFeedStoreTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("CodableFeedStore.store")
-        try? FileManager.default.removeItem(at: url)
+        try? FileManager.default.removeItem(at: storeUrl)
     }
     
     func test_retrieve_resultsWithEmptyOnEmptyCache() {
@@ -123,9 +126,14 @@ final class CodableFeedStoreTests: XCTestCase {
     
     // MARK: - Helpers:
     
-    func makeSut() -> CodableFeedStore {
-        let store = CodableFeedStore()
+    private func makeSut() -> CodableFeedStore {
+        let store = CodableFeedStore(storeUrl: storeUrl)
+        checkForMemoryLeaks(instance: store)
         return store
+    }
+    
+    private var storeUrl: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(type(of: self)).store")
     }
 }
 
