@@ -63,10 +63,10 @@ final class CodableFeedStoreTests: XCTestCase {
     }
     
     func test_retrieve_resultsWithEmptyOnEmptyCache() {
-        let store = CodableFeedStore()
+        let sut = makeSut()
         
         let exp = expectation(description: "Waiting for retrival")
-        store.retrieve() { result in
+        sut.retrieve() { result in
             switch result {
             case .empty:
                 break
@@ -79,11 +79,11 @@ final class CodableFeedStoreTests: XCTestCase {
     }
     
     func test_retrieveTwice_hasNoSideEffectsOnEmptyCache() {
-        let store = CodableFeedStore()
+        let sut = makeSut()
         
         let exp = expectation(description: "Waiting for retrival")
-        store.retrieve() { firstResult in
-            store.retrieve { secondResult in
+        sut.retrieve() { firstResult in
+            sut.retrieve { secondResult in
                 switch (firstResult, secondResult) {
                 case (.empty, .empty):
                     break
@@ -97,16 +97,16 @@ final class CodableFeedStoreTests: XCTestCase {
     }
     
     func test_retrieveAfterInsertion_returnsDataOnDataSuccessfullyInserted() {
-        let store = CodableFeedStore()
+        let sut = makeSut()
         let feed = anyFeed().locals
         let timestamp = Date()
         
         let exp = expectation(description: "Waiting for retrival")
-        store.insert(feed: feed, timestamp: timestamp) { insertionResult in
+        sut.insert(feed: feed, timestamp: timestamp) { insertionResult in
             guard insertionResult == nil else {
                 return XCTFail("Expected 'insert' to success")
             }
-            store.retrieve { retrivalResult in
+            sut.retrieve { retrivalResult in
                 switch retrivalResult {
                 case let .found(receivedFeed, receivedTimestamp):
                     XCTAssertEqual(feed, receivedFeed)
@@ -119,6 +119,13 @@ final class CodableFeedStoreTests: XCTestCase {
         }
         
         wait(for: [exp], timeout: 1.0)
+    }
+    
+    // MARK: - Helpers:
+    
+    func makeSut() -> CodableFeedStore {
+        let store = CodableFeedStore()
+        return store
     }
 }
 
