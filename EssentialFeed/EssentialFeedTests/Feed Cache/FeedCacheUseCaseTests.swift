@@ -75,7 +75,7 @@ final class FeedCacheUseCaseTests: XCTestCase {
         let store = FeedStoreSpy()
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
         
-        var receivedResult: LocalFeedLoader.Result?
+        var receivedResult: LocalFeedLoader.SaveResult?
         sut?.save(feed: anyFeed().models) { result in
             receivedResult = result
         }
@@ -89,7 +89,7 @@ final class FeedCacheUseCaseTests: XCTestCase {
         let store = FeedStoreSpy()
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
         
-        var receivedResult: LocalFeedLoader.Result?
+        var receivedResult: LocalFeedLoader.SaveResult?
         sut?.save(feed: anyFeed().models) { result in
             receivedResult = result
         }
@@ -121,57 +121,5 @@ final class FeedCacheUseCaseTests: XCTestCase {
         checkForMemoryLeaks(instance: sut)
         checkForMemoryLeaks(instance: store)
         return (store, sut)
-    }
-    
-    private func anyFeed() -> (models: [FeedImage], locals: [LocalFeedImage]) {
-        let models = [uniqueImage(), uniqueImage(), uniqueImage()]
-        let locals = models.map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
-        return (models, locals)
-    }
-    
-    private func uniqueImage() -> FeedImage {
-        FeedImage(
-            id: UUID(),
-            description: "any description",
-            location: "any location",
-            url: anyUrl()
-        )
-    }
-    
-    final class FeedStoreSpy: FeedStore {
-        enum Message: Equatable {
-            case deletion
-            case insertion(feed: [LocalFeedImage], timestamp: Date)
-        }
-        
-        var deletionCompletions: [FeedStore.DeletionCompletion] = []
-        var insertionCompletion: [FeedStore.InsertionCompletion] = []
-        var messages: [Message] = []
-        
-        func deleteFeed(completion: @escaping (Error?) -> Void) {
-            messages.append(.deletion)
-            deletionCompletions.append(completion)
-        }
-        
-        func insert(feed: [LocalFeedImage], timestamp: Date, completion: @escaping (Error?) -> Void) {
-            messages.append(.insertion(feed: feed, timestamp: timestamp))
-            insertionCompletion.append(completion)
-        }
-        
-        func completeDeletionWith(error: NSError, at index: Int = 0) {
-            deletionCompletions[index](error)
-        }
-        
-        func completeInsertionWith(error: NSError, at index: Int = 0) {
-            insertionCompletion[index](error)
-        }
-        
-        func completeDeletionWithSuccess(at index: Int = 0) {
-            deletionCompletions[index](nil)
-        }
-        
-        func completeInsetionWithSuccess(at index: Int = 0) {
-            insertionCompletion[index](nil)
-        }
     }
 }
