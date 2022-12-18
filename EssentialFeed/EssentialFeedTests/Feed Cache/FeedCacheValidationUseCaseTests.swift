@@ -34,35 +34,35 @@ final class FeedCacheValidationUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [.retrieve])
     }
     
-    func test_validate_doesNotRemoveCacheOnLessThan7DaysOldCache() {
+    func test_validate_doesNotRemoveCacheOnNotExpiredCache() {
         let currentDate = Date()
-        let lessThan7DaysOldTimestamp = currentDate.adding(days: -7).adding(seconds: 1)
+        let notExpiredDate = currentDate.minusCacheExpirationDate().adding(seconds: 1)
         let (store, sut) = makeSut(dateProvider: { currentDate })
         
         sut.validate()
-        store.completeRetrievalWith(localFeed: anyFeed().locals, timestamp: lessThan7DaysOldTimestamp)
+        store.completeRetrievalWith(localFeed: anyFeed().locals, timestamp: notExpiredDate)
         
         XCTAssertEqual(store.messages, [.retrieve])
     }
     
-    func test_validate_deletesCacheOn7DaysOldCache() {
+    func test_validate_deletesCacheOnCacheExpirationDate() {
         let currentDate = Date()
-        let a7DaysOldTimestamp = currentDate.adding(days: -7)
+        let expirationDate = currentDate.minusCacheExpirationDate()
         let (store, sut) = makeSut(dateProvider: { currentDate })
         
         sut.validate()
-        store.completeRetrievalWith(localFeed: anyFeed().locals, timestamp: a7DaysOldTimestamp)
+        store.completeRetrievalWith(localFeed: anyFeed().locals, timestamp: expirationDate)
         
         XCTAssertEqual(store.messages, [.retrieve, .deletion])
     }
     
-    func test_validate_deletesCacheOnMoreThan7DaysOldCache() {
+    func test_validate_deletesCacheOnExpiredCache() {
         let currentDate = Date()
-        let moreThan7DaysOldTimestamp = currentDate.adding(days: -7).adding(seconds: -1)
+        let expiredCacheDate = currentDate.minusCacheExpirationDate().adding(seconds: -1)
         let (store, sut) = makeSut(dateProvider: { currentDate })
         
         sut.validate()
-        store.completeRetrievalWith(localFeed: anyFeed().locals, timestamp: moreThan7DaysOldTimestamp)
+        store.completeRetrievalWith(localFeed: anyFeed().locals, timestamp: expiredCacheDate)
         
         XCTAssertEqual(store.messages, [.retrieve, .deletion])
     }
@@ -90,11 +90,19 @@ final class FeedCacheValidationUseCaseTests: XCTestCase {
 }
 
 extension Date {
-    func adding(days: Int) -> Date {
+    func minusCacheExpirationDate() -> Date {
+        adding(days: -cacheExpirationAgeInDays)
+    }
+    
+    private var cacheExpirationAgeInDays: Int { 7 }
+    
+    private func adding(days: Int) -> Date {
         let calendar = Calendar(identifier: .gregorian)
         return calendar.date(byAdding: .day, value: days, to: self) ?? Date()
     }
+}
     
+extension Date {
     func adding(seconds: TimeInterval) -> Date {
         self + seconds
     }
