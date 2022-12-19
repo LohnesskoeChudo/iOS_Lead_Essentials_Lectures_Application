@@ -68,4 +68,8 @@ public final class CodableFeedStore {
             completion(error)
         }
     }
+    
+    public func deleteFeed(compleiton: FeedStore.DeletionCompletion) {
+        compleiton(nil)
+    }
 }

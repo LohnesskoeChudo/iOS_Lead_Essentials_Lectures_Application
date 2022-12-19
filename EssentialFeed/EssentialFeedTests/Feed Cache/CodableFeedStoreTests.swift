@@ -92,6 +92,14 @@ final class CodableFeedStoreTests: XCTestCase {
         XCTAssertNotNil(error)
     }
     
+    func test_deleteFeed_doesNothingOnEmptyCache() {
+        let sut = makeSut()
+        
+        delete(sut: sut)
+        
+        expect(sut: sut, toReceive: .empty)
+    }
+    
     // MARK: - Helpers:
     
     private func makeSut(storeUrl: URL? = nil) -> CodableFeedStore {
@@ -127,6 +135,18 @@ final class CodableFeedStoreTests: XCTestCase {
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)
+    }
+    
+    @discardableResult
+    private func delete(sut: CodableFeedStore) -> Error? {
+        let exp = expectation(description: "Waiting for retrival")
+        var error: Error?
+        sut.deleteFeed { insertionError in
+            error = insertionError
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1.0)
+        return error
     }
     
     private func removeArtifacts() {
