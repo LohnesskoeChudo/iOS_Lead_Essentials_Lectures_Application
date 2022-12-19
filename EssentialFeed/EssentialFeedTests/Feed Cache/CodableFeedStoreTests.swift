@@ -72,6 +72,17 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut: sut, toReceive: .failure(anyNsError()))
     }
     
+    func test_insert_overridesPreviousInsertedData() {
+        let sut = makeSut(storeUrl: storeUrl)
+        insert(sut: sut, feed: anyFeed().locals, timestamp: Date())
+        let latestFeed = anyFeed().locals
+        let latestTimestamp = Date()
+        
+        insert(sut: sut, feed: latestFeed, timestamp: latestTimestamp)
+        
+        expect(sut: sut, toReceive: .found(localImages: latestFeed, timestamp: latestTimestamp))
+    }
+    
     // MARK: - Helpers:
     
     private func makeSut(storeUrl: URL? = nil) -> CodableFeedStore {
