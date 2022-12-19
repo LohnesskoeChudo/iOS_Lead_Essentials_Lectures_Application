@@ -19,20 +19,20 @@ final class CodableFeedStoreTests: XCTestCase {
         removeArtifacts()
     }
     
-    func test_retrieve_resultsWithEmptyOnEmptyCache() {
+    func test_retrieve_deliversEmptyOnEmptyCache() {
         let sut = makeSut()
         
         expect(sut: sut, toReceive: .empty)
     }
     
-    func test_retrieveTwice_hasNoSideEffectsOnEmptyCache() {
+    func test_retrieve_hasNoSideEffectsOnEmptyCache() {
         let sut = makeSut()
         
         expect(sut: sut, toReceive: .empty)
         expect(sut: sut, toReceive: .empty)
     }
     
-    func test_retrieveAfterInsertion_returnsDataOnDataSuccessfullyInserted() {
+    func test_retrieve_deliversDataOnDataInserted() {
         let sut = makeSut()
         let feed = anyFeed().locals
         let timestamp = Date()
@@ -42,7 +42,7 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut: sut, toReceive: .found(localImages: feed, timestamp: timestamp))
     }
     
-    func test_retrieveTwiceAfterInsertion_hasNoSideEffectsOnDataSuccessfullyInserted() {
+    func test_retrieve_hasNoSideEffectsOnDataInserted() {
         let sut = makeSut()
         let feed = anyFeed().locals
         let timestamp = Date()
@@ -101,7 +101,7 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut: sut, toReceive: .empty)
     }
     
-    func test_deleteFeedAfterDataInsertion_removesCache() {
+    func test_deleteFeed_removesCacheAfterInsertion() {
         let sut = makeSut()
         insert(sut: sut, feed: anyFeed().locals, timestamp: Date())
         
