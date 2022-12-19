@@ -101,6 +101,14 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut: sut, toReceive: .empty)
     }
     
+    func test_deleteFeedAfterDataInsertion_removesCache() {
+        let sut = makeSut()
+        insert(sut: sut, feed: anyFeed().locals, timestamp: Date())
+        
+        delete(sut: sut)
+        
+        expect(sut: sut, toReceive: .empty)
+    }
     // MARK: - Helpers:
     
     private func makeSut(storeUrl: URL? = nil) -> CodableFeedStore {

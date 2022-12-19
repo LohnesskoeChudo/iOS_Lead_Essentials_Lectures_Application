@@ -70,6 +70,10 @@ public final class CodableFeedStore {
     }
     
     public func deleteFeed(compleiton: FeedStore.DeletionCompletion) {
+        guard FileManager.default.fileExists(atPath: storeUrl.relativePath) else {
+            return compleiton(nil)
+        }
+        try! FileManager.default.removeItem(at: storeUrl)
         compleiton(nil)
     }
 }
