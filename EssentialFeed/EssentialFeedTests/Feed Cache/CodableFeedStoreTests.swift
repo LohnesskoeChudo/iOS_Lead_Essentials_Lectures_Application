@@ -37,14 +37,7 @@ final class CodableFeedStoreTests: XCTestCase {
         let feed = anyFeed().locals
         let timestamp = Date()
         
-        let exp = expectation(description: "Waiting for retrival")
-        sut.insert(feed: feed, timestamp: timestamp) { insertionError in
-            guard insertionError == nil else {
-                return XCTFail("Expect to insert successfully")
-            }
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
+        insert(sut: sut, feed: feed, timestamp: timestamp)
         
         expect(sut: sut, toReceive: .found(localImages: feed, timestamp: timestamp))
     }
@@ -57,7 +50,18 @@ final class CodableFeedStoreTests: XCTestCase {
         return store
     }
     
-    private func expect(sut: CodableFeedStore, toReceive expectedResult: FeedRetrievalResult, file: StaticString = #file, line: UInt = #line) {
+    private func insert(sut: CodableFeedStore, feed: [LocalFeedImage], timestamp: Date, file: StaticString = #filePath, line: UInt = #line) {
+        let exp = expectation(description: "Waiting for retrival")
+        sut.insert(feed: feed, timestamp: timestamp) { insertionError in
+            guard insertionError == nil else {
+                return XCTFail("Expect to insert successfully", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    private func expect(sut: CodableFeedStore, toReceive expectedResult: FeedRetrievalResult, file: StaticString = #filePath, line: UInt = #line) {
         let exp = expectation(description: "Waiting for retrival")
         sut.retrieve() { receivedResult in
             switch (expectedResult, receivedResult) {
