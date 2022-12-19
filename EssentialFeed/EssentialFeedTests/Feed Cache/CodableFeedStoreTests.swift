@@ -95,8 +95,9 @@ final class CodableFeedStoreTests: XCTestCase {
     func test_deleteFeed_doesNothingOnEmptyCache() {
         let sut = makeSut()
         
-        delete(sut: sut)
+        let error = delete(sut: sut)
         
+        XCTAssertNil(error)
         expect(sut: sut, toReceive: .empty)
     }
     
