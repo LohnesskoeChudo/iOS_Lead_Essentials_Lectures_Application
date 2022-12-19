@@ -42,14 +42,19 @@ public final class CodableFeedStore {
     
     public func retrieve(completion: @escaping FeedStore.RetrievalCompletion) {
         if let data = try? Data(contentsOf: storeUrl) {
-            do {
-                let cache = try JSONDecoder().decode(Cache.self, from: data)
-                completion(.found(localImages: cache.locals, timestamp: cache.timestamp))
-            } catch {
-                completion(.failure(error))
-            }
+            let result = mapCache(data: data)
+            completion(result)
         } else {
             completion(.empty)
+        }
+    }
+    
+    private func mapCache(data: Data) -> FeedRetrievalResult {
+        do {
+            let cache = try JSONDecoder().decode(Cache.self, from: data)
+            return .found(localImages: cache.locals, timestamp: cache.timestamp)
+        } catch {
+            return .failure(error)
         }
     }
     
