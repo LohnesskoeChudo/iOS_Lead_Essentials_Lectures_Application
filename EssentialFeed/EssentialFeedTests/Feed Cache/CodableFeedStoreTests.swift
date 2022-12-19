@@ -53,6 +53,14 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut: sut, toReceive: .found(localImages: feed, timestamp: timestamp))
     }
     
+    func test_retrieve_deliversErrorOnFailure() {
+        let sut = makeSut()
+        
+        try! Data("invalid data".utf8).write(to: storeUrl)
+        
+        expect(sut: sut, toReceive: .failure(anyNsError()))
+    }
+    
     // MARK: - Helpers:
     
     private func makeSut() -> CodableFeedStore {
