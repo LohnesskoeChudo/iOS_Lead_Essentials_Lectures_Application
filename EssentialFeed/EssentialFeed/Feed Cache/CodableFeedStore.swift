@@ -35,49 +35,54 @@ public final class CodableFeedStore: FeedStore {
     }
     
     private let storeUrl: URL
+    private let queue = DispatchQueue(label: "codable-feed-store.queue", qos: .userInitiated, attributes: .concurrent)
     
     public init(storeUrl: URL) {
         self.storeUrl = storeUrl
     }
     
     public func retrieve(completion: @escaping RetrievalCompletion) {
-        if let data = try? Data(contentsOf: storeUrl) {
-            let result = mapCache(data: data)
-            completion(result)
-        } else {
-            completion(.empty)
-        }
-    }
-    
-    private func mapCache(data: Data) -> FeedRetrievalResult {
-        do {
-            let cache = try JSONDecoder().decode(Cache.self, from: data)
-            return .found(localImages: cache.locals, timestamp: cache.timestamp)
-        } catch {
-            return .failure(error)
+        let storeUrl = storeUrl
+        queue.async {
+            guard let data = try? Data(contentsOf: storeUrl) else {
+                return completion(.empty)
+            }
+            do {
+                let cache = try JSONDecoder().decode(Cache.self, from: data)
+                completion(.found(localImages: cache.locals, timestamp: cache.timestamp))
+            } catch {
+                completion(.failure(error))
+            }
         }
     }
     
     public func insert(feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-        do {
-            let cache = Cache(feed: feed.codables, timestamp: timestamp)
-            let encodedData = try! JSONEncoder().encode(cache)
-            try encodedData.write(to: storeUrl)
-            completion(nil)
-        } catch {
-            completion(error)
+        let storeUrl = storeUrl
+        queue.async(flags: .barrier) {
+            do {
+                let cache = Cache(feed: feed.codables, timestamp: timestamp)
+                let encodedData = try! JSONEncoder().encode(cache)
+                try encodedData.write(to: storeUrl)
+                completion(nil)
+            } catch {
+                completion(error)
+            }
         }
     }
     
-    public func deleteFeed(completion compleiton: DeletionCompletion) {
-        guard FileManager.default.fileExists(atPath: storeUrl.relativePath) else {
-            return compleiton(nil)
-        }
-        do {
-            try FileManager.default.removeItem(at: storeUrl)
-            compleiton(nil)
-        } catch {
-            compleiton(error)
+    public func deleteFeed(completion compleiton: @escaping DeletionCompletion) {
+        let storeUrl = storeUrl
+        queue.async(flags: .barrier) {
+            guard FileManager.default.fileExists(atPath: storeUrl.relativePath) else {
+                compleiton(nil)
+                return
+            }
+            do {
+                try FileManager.default.removeItem(at: storeUrl)
+                compleiton(nil)
+            } catch {
+                compleiton(error)
+            }
         }
     }
 }

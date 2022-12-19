@@ -120,6 +120,32 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut: sut, toReceive: .empty)
     }
     
+    func test_operations_runSerially() {
+        let sut = makeSut()
+        
+        var operations: [XCTestExpectation] = []
+        let operation1 = expectation(description: "operation1")
+        sut.insert(feed: anyFeed().locals, timestamp: Date()) { _ in
+            operations.append(operation1)
+            operation1.fulfill()
+        }
+        
+        let operation2 = expectation(description: "operation2")
+        sut.deleteFeed { _ in
+            operations.append(operation2)
+            operation2.fulfill()
+        }
+        
+        let operation3 = expectation(description: "operation3")
+        sut.insert(feed: anyFeed().locals, timestamp: Date()) { _ in
+            operations.append(operation3)
+            operation3.fulfill()
+        }
+        
+        wait(for: [operation1, operation2, operation3], timeout: 5.0)
+        XCTAssertEqual(operations, [operation1, operation2, operation3])
+    }
+    
     // MARK: - Helpers:
     
     private func makeSut(storeUrl: URL? = nil) -> FeedStore {
@@ -159,13 +185,13 @@ final class CodableFeedStoreTests: XCTestCase {
     
     @discardableResult
     private func delete(sut: FeedStore) -> Error? {
-        let exp = expectation(description: "Waiting for retrival")
         var error: Error?
+        let exp = expectation(description: "Waiting for retrival")
         sut.deleteFeed { insertionError in
             error = insertionError
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 1.0)
+        wait(for: [exp], timeout: 5.0)
         return error
     }
     
