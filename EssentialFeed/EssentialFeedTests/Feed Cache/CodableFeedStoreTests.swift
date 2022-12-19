@@ -73,7 +73,7 @@ final class CodableFeedStoreTests: XCTestCase {
     }
     
     func test_insert_overridesPreviousInsertedData() {
-        let sut = makeSut(storeUrl: storeUrl)
+        let sut = makeSut()
         insert(sut: sut, feed: anyFeed().locals, timestamp: Date())
         let latestFeed = anyFeed().locals
         let latestTimestamp = Date()
@@ -81,6 +81,15 @@ final class CodableFeedStoreTests: XCTestCase {
         insert(sut: sut, feed: latestFeed, timestamp: latestTimestamp)
         
         expect(sut: sut, toReceive: .found(localImages: latestFeed, timestamp: latestTimestamp))
+    }
+    
+    func test_insert_deliversErrorOnFailure() {
+        let invalidStoreUrl = URL(string: "invalid://store-url")!
+        let sut = makeSut(storeUrl: invalidStoreUrl)
+        
+        let error = insert(sut: sut, feed: anyFeed().locals, timestamp: Date())
+        
+        XCTAssertNotNil(error)
     }
     
     // MARK: - Helpers:
@@ -91,15 +100,16 @@ final class CodableFeedStoreTests: XCTestCase {
         return store
     }
     
-    private func insert(sut: CodableFeedStore, feed: [LocalFeedImage], timestamp: Date, file: StaticString = #filePath, line: UInt = #line) {
+    @discardableResult
+    private func insert(sut: CodableFeedStore, feed: [LocalFeedImage], timestamp: Date) -> Error? {
         let exp = expectation(description: "Waiting for retrival")
+        var error: Error?
         sut.insert(feed: feed, timestamp: timestamp) { insertionError in
-            guard insertionError == nil else {
-                return XCTFail("Expect to insert successfully", file: file, line: line)
-            }
+            error = insertionError
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)
+        return error
     }
     
     private func expect(sut: CodableFeedStore, toReceive expectedResult: FeedRetrievalResult, file: StaticString = #filePath, line: UInt = #line) {
