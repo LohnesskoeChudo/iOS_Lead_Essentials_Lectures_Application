@@ -42,6 +42,17 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut: sut, toReceive: .found(localImages: feed, timestamp: timestamp))
     }
     
+    func test_retrieveTwiceAfterInsertion_hasNoSideEffectsOnDataSuccessfullyInserted() {
+        let sut = makeSut()
+        let feed = anyFeed().locals
+        let timestamp = Date()
+        
+        insert(sut: sut, feed: feed, timestamp: timestamp)
+        
+        expect(sut: sut, toReceive: .found(localImages: feed, timestamp: timestamp))
+        expect(sut: sut, toReceive: .found(localImages: feed, timestamp: timestamp))
+    }
+    
     // MARK: - Helpers:
     
     private func makeSut() -> CodableFeedStore {
