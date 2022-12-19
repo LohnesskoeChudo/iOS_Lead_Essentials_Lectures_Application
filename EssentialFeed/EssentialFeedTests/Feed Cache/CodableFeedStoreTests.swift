@@ -92,12 +92,28 @@ final class CodableFeedStoreTests: XCTestCase {
         XCTAssertNotNil(error)
     }
     
-    func test_deleteFeed_doesNothingOnEmptyCache() {
+    func test_insert_hasNoSideEffectsOnFailure() {
+        let invalidStoreUrl = URL(string: "invalid://store-url")!
+        let sut = makeSut(storeUrl: invalidStoreUrl)
+        
+        insert(sut: sut, feed: anyFeed().locals, timestamp: Date())
+        
+        expect(sut: sut, toReceive: .empty)
+    }
+    
+    func test_deleteFeed_doesNotDeliverErrorOnEmptyCache() {
         let sut = makeSut()
         
         let error = delete(sut: sut)
         
         XCTAssertNil(error)
+    }
+    
+    func test_deleteFeed_hasNoSideEffectsOnEmptyCache() {
+        let sut = makeSut()
+        
+        delete(sut: sut)
+        
         expect(sut: sut, toReceive: .empty)
     }
     
@@ -117,6 +133,14 @@ final class CodableFeedStoreTests: XCTestCase {
         let error = delete(sut: sut)
         
         XCTAssertNotNil(error)
+    }
+    
+    func test_deleteFeed_hasNoSideEffectsOnFailure() {
+        let notPermittedUrl = cachesDirectory()
+        let sut = makeSut(storeUrl: notPermittedUrl)
+        
+        delete(sut: sut)
+        
         expect(sut: sut, toReceive: .empty)
     }
     
