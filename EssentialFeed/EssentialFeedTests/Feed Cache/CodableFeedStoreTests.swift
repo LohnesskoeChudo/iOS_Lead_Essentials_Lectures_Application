@@ -122,14 +122,14 @@ final class CodableFeedStoreTests: XCTestCase {
     
     // MARK: - Helpers:
     
-    private func makeSut(storeUrl: URL? = nil) -> CodableFeedStore {
+    private func makeSut(storeUrl: URL? = nil) -> FeedStore {
         let store = CodableFeedStore(storeUrl: storeUrl ?? self.storeUrl)
         checkForMemoryLeaks(instance: store)
         return store
     }
     
     @discardableResult
-    private func insert(sut: CodableFeedStore, feed: [LocalFeedImage], timestamp: Date) -> Error? {
+    private func insert(sut: FeedStore, feed: [LocalFeedImage], timestamp: Date) -> Error? {
         let exp = expectation(description: "Waiting for retrival")
         var error: Error?
         sut.insert(feed: feed, timestamp: timestamp) { insertionError in
@@ -140,7 +140,7 @@ final class CodableFeedStoreTests: XCTestCase {
         return error
     }
     
-    private func expect(sut: CodableFeedStore, toReceive expectedResult: FeedRetrievalResult, file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(sut: FeedStore, toReceive expectedResult: FeedRetrievalResult, file: StaticString = #filePath, line: UInt = #line) {
         let exp = expectation(description: "Waiting for retrival")
         sut.retrieve() { receivedResult in
             switch (expectedResult, receivedResult) {
@@ -158,7 +158,7 @@ final class CodableFeedStoreTests: XCTestCase {
     }
     
     @discardableResult
-    private func delete(sut: CodableFeedStore) -> Error? {
+    private func delete(sut: FeedStore) -> Error? {
         let exp = expectation(description: "Waiting for retrival")
         var error: Error?
         sut.deleteFeed { insertionError in
