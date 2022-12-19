@@ -13,7 +13,7 @@ private extension Array where Element == LocalFeedImage {
     }
 }
 
-public final class CodableFeedStore {
+public final class CodableFeedStore: FeedStore {
     struct Cache: Codable {
         let feed: [CodableFeedImage]
         let timestamp: Date
@@ -40,7 +40,7 @@ public final class CodableFeedStore {
         self.storeUrl = storeUrl
     }
     
-    public func retrieve(completion: @escaping FeedStore.RetrievalCompletion) {
+    public func retrieve(completion: @escaping RetrievalCompletion) {
         if let data = try? Data(contentsOf: storeUrl) {
             let result = mapCache(data: data)
             completion(result)
@@ -58,7 +58,7 @@ public final class CodableFeedStore {
         }
     }
     
-    public func insert(feed: [LocalFeedImage], timestamp: Date, completion: @escaping FeedStore.InsertionCompletion) {
+    public func insert(feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
         do {
             let cache = Cache(feed: feed.codables, timestamp: timestamp)
             let encodedData = try! JSONEncoder().encode(cache)
@@ -69,7 +69,7 @@ public final class CodableFeedStore {
         }
     }
     
-    public func deleteFeed(compleiton: FeedStore.DeletionCompletion) {
+    public func deleteFeed(completion compleiton: DeletionCompletion) {
         guard FileManager.default.fileExists(atPath: storeUrl.relativePath) else {
             return compleiton(nil)
         }
