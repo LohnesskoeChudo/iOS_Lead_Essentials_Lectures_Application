@@ -72,6 +72,23 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut: sut, toReceive: .failure(anyNsError()))
     }
     
+    func test_insert_deliversNoErrorOnEmptyCache() {
+        let sut = makeSut()
+        
+        let error = insert(sut: sut, feed: anyFeed().locals, timestamp: Date())
+        
+        XCTAssertNil(error)
+    }
+    
+    func test_insert_deliversNoErrorOnNonEmptyCache() {
+        let sut = makeSut()
+        insert(sut: sut, feed: anyFeed().locals, timestamp: Date())
+        
+        let error = insert(sut: sut, feed: anyFeed().locals, timestamp: Date())
+        
+        XCTAssertNil(error)
+    }
+    
     func test_insert_overridesPreviousInsertedData() {
         let sut = makeSut()
         insert(sut: sut, feed: anyFeed().locals, timestamp: Date())
