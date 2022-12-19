@@ -54,7 +54,8 @@ final class CodableFeedStoreTests: XCTestCase {
     }
     
     func test_retrieve_deliversErrorOnFailure() {
-        let sut = makeSut()
+        let storeUrl = self.storeUrl
+        let sut = makeSut(storeUrl: storeUrl)
         
         try! Data("invalid data".utf8).write(to: storeUrl)
         
@@ -63,8 +64,8 @@ final class CodableFeedStoreTests: XCTestCase {
     
     // MARK: - Helpers:
     
-    private func makeSut() -> CodableFeedStore {
-        let store = CodableFeedStore(storeUrl: storeUrl)
+    private func makeSut(storeUrl: URL? = nil) -> CodableFeedStore {
+        let store = CodableFeedStore(storeUrl: storeUrl ?? self.storeUrl)
         checkForMemoryLeaks(instance: store)
         return store
     }
