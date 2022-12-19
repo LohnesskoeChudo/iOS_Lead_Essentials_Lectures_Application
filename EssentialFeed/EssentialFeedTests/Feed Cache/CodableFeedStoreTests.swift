@@ -62,6 +62,16 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut: sut, toReceive: .failure(anyNsError()))
     }
     
+    func test_retrieve_hasNoSideEffectsOnFailure() {
+        let storeUrl = self.storeUrl
+        let sut = makeSut(storeUrl: storeUrl)
+        
+        try! Data("invalid data".utf8).write(to: storeUrl)
+        
+        expect(sut: sut, toReceive: .failure(anyNsError()))
+        expect(sut: sut, toReceive: .failure(anyNsError()))
+    }
+    
     // MARK: - Helpers:
     
     private func makeSut(storeUrl: URL? = nil) -> CodableFeedStore {
