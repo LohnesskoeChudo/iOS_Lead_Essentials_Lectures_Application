@@ -23,17 +23,7 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
     func test_load_deliversNoImagesOnEmptyCache() {
         let sut = makeSut()
         
-        let exp = expectation(description: "waiting for loading images")
-        sut.load { result in
-            switch result {
-            case let .success(feed):
-                XCTAssertEqual(feed, [])
-            default:
-                XCTFail("expected to receive empty feed but got: \(result)")
-            }
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
+        load(sut: sut, expectedResult: .success([]))
     }
     
     func test_load_deliversFeedSavedOnAnotherInstance() {
@@ -48,18 +38,10 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         }
         wait(for: [exp1], timeout: 1.0)
         
-        let exp2 = expectation(description: "waiting for load")
-        sutForLoading.load { result in
-            switch result {
-            case let .success(loadedFeed):
-                XCTAssertEqual(loadedFeed, feed)
-            default:
-                XCTFail("expected to receive feed but got: \(result)")
-            }
-            exp2.fulfill()
-        }
-        wait(for: [exp2], timeout: 1.0)
+        load(sut: sutForLoading, expectedResult: .success(feed))
     }
+    
+    // MARK: - Helpers:
     
     private func makeSut() -> LocalFeedLoader {
         let store = CodableFeedStore(storeUrl: storeUrl)
@@ -67,6 +49,21 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         checkForMemoryLeaks(instance: store)
         checkForMemoryLeaks(instance: sut)
         return sut
+    }
+    
+    private func load(sut: LocalFeedLoader, expectedResult: LocalFeedLoader.LoadResult, file: StaticString = #filePath, line: UInt = #line) {
+        
+        let exp = expectation(description: "waiting for load")
+        sut.load { result in
+            switch (result, expectedResult) {
+            case let (.success(loadedFeed), .success(expectedFeed)):
+                XCTAssertEqual(loadedFeed, expectedFeed, file: file, line: line)
+            default:
+                XCTFail("expected to receive: \(expectedResult) but got: \(result)", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1.0)
     }
     
     private func removeArtifacts() {
