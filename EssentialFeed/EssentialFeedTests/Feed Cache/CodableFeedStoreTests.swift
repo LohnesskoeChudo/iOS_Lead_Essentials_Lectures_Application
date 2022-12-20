@@ -141,6 +141,7 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     
     private func removeArtifacts() {
         try? FileManager.default.removeItem(at: storeUrl)
+        try? FileManager.default.removeItem(at: cachesDirectory())
     }
     
     private var storeUrl: URL {

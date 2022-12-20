@@ -101,7 +101,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
             operation3.fulfill()
         }
         
-        wait(for: [operation1, operation2, operation3], timeout: 5.0)
+        wait(for: [operation1, operation2, operation3], timeout: 1.0)
         XCTAssertEqual(operations, [operation1, operation2, operation3], file: file, line: line)
     }
     
@@ -149,7 +149,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
             error = insertionError
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 5.0)
+        wait(for: [exp], timeout: 1.0)
         return error
     }
 }
