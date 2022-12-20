@@ -9,8 +9,18 @@ import XCTest
 import EssentialFeed
 
 final class EssentialFeedCacheIntegrationTests: XCTestCase {
+    
+    override func setUp() {
+        super.setUp()
+        removeArtifacts()
+    }
+    
+    override func tearDown() {
+        super.tearDown()
+        removeArtifacts()
+    }
 
-    func test_load_deliversNoImagesOnEmptyCache() throws {
+    func test_load_deliversNoImagesOnEmptyCache() {
         let sut = makeSut()
         
         let exp = expectation(description: "waiting for loading images")
@@ -32,6 +42,10 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         checkForMemoryLeaks(instance: store)
         checkForMemoryLeaks(instance: sut)
         return sut
+    }
+    
+    private func removeArtifacts() {
+        try? FileManager.default.removeItem(at: storeUrl)
     }
     
     private var storeUrl: URL {
