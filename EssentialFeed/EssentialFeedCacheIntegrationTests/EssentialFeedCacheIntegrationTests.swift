@@ -31,12 +31,7 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         let sutForLoading = makeSut()
         let feed = anyFeed().models
         
-        let exp1 = expectation(description: "waiting for save")
-        sutForSaving.save(feed: feed) { error in
-            XCTAssertNil(error, "expected to successfully save feed")
-            exp1.fulfill()
-        }
-        wait(for: [exp1], timeout: 1.0)
+        save(with: sutForSaving, feed: feed)
         
         load(sut: sutForLoading, expectedResult: .success(feed))
     }
@@ -48,20 +43,8 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         let latestFeed = anyFeed().models
         let loadingSut = makeSut()
         
-        
-        let exp1 = expectation(description: "waiting for save")
-        firstSavingSut.save(feed: firstFeed) { error in
-            XCTAssertNil(error, "expected to successfully save feed")
-            exp1.fulfill()
-        }
-        wait(for: [exp1], timeout: 1.0)
-        
-        let exp2 = expectation(description: "waiting for save")
-        latestSavingSut.save(feed: latestFeed) { error in
-            XCTAssertNil(error, "expected to successfully save feed")
-            exp2.fulfill()
-        }
-        wait(for: [exp2], timeout: 1.0)
+        save(with: firstSavingSut, feed: firstFeed)
+        save(with: latestSavingSut, feed: latestFeed)
         
         load(sut: loadingSut, expectedResult: .success(latestFeed))
     }
@@ -86,6 +69,15 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
             default:
                 XCTFail("expected to receive: \(expectedResult) but got: \(result)", file: file, line: line)
             }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    private func save(with sut: LocalFeedLoader, feed: [FeedImage]) {
+        let exp = expectation(description: "waiting for save")
+        sut.save(feed: feed) { error in
+            XCTAssertNil(error, "expected to successfully save feed")
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)
