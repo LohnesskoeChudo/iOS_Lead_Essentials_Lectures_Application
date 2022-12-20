@@ -36,6 +36,31 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    func test_load_deliversFeedSavedOnAnotherInstance() {
+        let sutForSaving = makeSut()
+        let sutForLoading = makeSut()
+        let feed = anyFeed().models
+        
+        let exp1 = expectation(description: "waiting for save")
+        sutForSaving.save(feed: feed) { error in
+            XCTAssertNil(error, "expected to successfully save feed")
+            exp1.fulfill()
+        }
+        wait(for: [exp1], timeout: 1.0)
+        
+        let exp2 = expectation(description: "waiting for load")
+        sutForLoading.load { result in
+            switch result {
+            case let .success(loadedFeed):
+                XCTAssertEqual(loadedFeed, feed)
+            default:
+                XCTFail("expected to receive feed but got: \(result)")
+            }
+            exp2.fulfill()
+        }
+        wait(for: [exp2], timeout: 1.0)
+    }
+    
     private func makeSut() -> LocalFeedLoader {
         let store = CodableFeedStore(storeUrl: storeUrl)
         let sut = LocalFeedLoader(store: store, currentDate: Date.init)
