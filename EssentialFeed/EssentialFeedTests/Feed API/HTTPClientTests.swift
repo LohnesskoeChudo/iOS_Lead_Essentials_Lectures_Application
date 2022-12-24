@@ -91,7 +91,7 @@ final class HTTPClientTests: XCTestCase {
     private func responseForStubbed(data: Data?, response: URLResponse?, error: NSError?, file: StaticString = #filePath, line: UInt = #line) -> (Data?, HTTPURLResponse?) {
         let result = resultForStubbed(data: data, response: response, error: error, file: file, line: line)
         switch result {
-        case let .success(data, response):
+        case let .success((data, response)):
             return (data, response)
         default:
             XCTFail("Expected to succeed", file: file, line: line)
@@ -99,12 +99,12 @@ final class HTTPClientTests: XCTestCase {
         }
     }
     
-    private func resultForStubbed(data: Data?, response: URLResponse?, error: NSError?, file: StaticString = #filePath, line: UInt = #line) -> HTTPResponse {
+    private func resultForStubbed(data: Data?, response: URLResponse?, error: NSError?, file: StaticString = #filePath, line: UInt = #line) -> HTTPClient.Result {
         let sut = makeSut()
         URLProtocolStub.stub(data: data, response: response, error: error)
         
         let exp = expectation(description: "wait for getting from url")
-        var receivedResult: HTTPResponse!
+        var receivedResult: HTTPClient.Result!
         sut.get(from: anyUrl()) { response in
             receivedResult = response
             exp.fulfill()
