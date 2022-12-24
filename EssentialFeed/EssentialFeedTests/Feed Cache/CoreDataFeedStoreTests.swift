@@ -131,7 +131,7 @@ class FeedStoreChallengeTests: XCTestCase, FailableFeedStoreSpecs {
 
         delete(sut: sut)
 
-        expect(sut: sut, toReceive: .found(localImages: feed, timestamp: timestamp))
+        expect(sut: sut, toReceive: .success((feed, timestamp)))
     }
     
     func test_deleteFeed_removesAllObjects() throws {
