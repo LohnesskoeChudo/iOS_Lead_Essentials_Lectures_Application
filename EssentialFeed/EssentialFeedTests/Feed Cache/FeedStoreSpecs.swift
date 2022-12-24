@@ -8,35 +8,35 @@
 import Foundation
 
 protocol FeedStoreSpecs {
-    func test_retrieve_deliversEmptyOnEmptyCache()
-    func test_retrieve_hasNoSideEffectsOnEmptyCache()
-    func test_retrieve_deliversDataOnDataInserted()
-    func test_retrieve_hasNoSideEffectsOnDataInserted()
+    func test_retrieve_deliversEmptyOnEmptyCache() throws
+    func test_retrieve_hasNoSideEffectsOnEmptyCache() throws
+    func test_retrieve_deliversDataOnDataInserted() throws
+    func test_retrieve_hasNoSideEffectsOnDataInserted() throws
 
-    func test_insert_deliversNoErrorOnEmptyCache()
-    func test_insert_deliversNoErrorOnNonEmptyCache()
-    func test_insert_overridesPreviousInsertedData()
+    func test_insert_deliversNoErrorOnEmptyCache() throws
+    func test_insert_deliversNoErrorOnNonEmptyCache() throws
+    func test_insert_overridesPreviousInsertedData() throws
     
-    func test_deleteFeed_doesNotDeliverErrorOnEmptyCache()
-    func test_deleteFeed_hasNoSideEffectsOnEmptyCache()
-    func test_deleteFeed_removesCacheAfterInsertion()
+    func test_deleteFeed_doesNotDeliverErrorOnEmptyCache() throws
+    func test_deleteFeed_hasNoSideEffectsOnEmptyCache() throws
+    func test_deleteFeed_removesCacheAfterInsertion() throws
 
-    func test_operations_runSerially()
+    func test_operations_runSerially() throws
 }
 
 protocol FailableRetrievalFeedStoreSpecs: FeedStoreSpecs {
-    func test_retrieve_deliversErrorOnFailure()
-    func test_retrieve_hasNoSideEffectsOnFailure()
+    func test_retrieve_deliversErrorOnFailure() throws
+    func test_retrieve_hasNoSideEffectsOnFailure() throws
 }
 
 protocol FailableInsertionFeedStoreSpecs: FeedStoreSpecs {
-    func test_insert_deliversErrorOnFailure()
-    func test_insert_hasNoSideEffectsOnFailure()
+    func test_insert_deliversErrorOnFailure() throws
+    func test_insert_hasNoSideEffectsOnFailure() throws
 }
 
 protocol FailableDeletionFeedStoreSpecs: FeedStoreSpecs {
-    func test_deleteFeed_deliversErrorOnFailure()
-    func test_deleteFeed_hasNoSideEffectsOnFailure()
+    func test_deleteFeed_deliversErrorOnFailure() throws
+    func test_deleteFeed_hasNoSideEffectsOnFailure() throws
 }
 
 typealias FailableFeedStoreSpecs = FailableDeletionFeedStoreSpecs & FailableInsertionFeedStoreSpecs & FailableRetrievalFeedStoreSpecs

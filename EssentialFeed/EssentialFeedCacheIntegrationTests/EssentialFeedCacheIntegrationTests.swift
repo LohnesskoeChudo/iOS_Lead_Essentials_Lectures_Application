@@ -20,15 +20,15 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         removeArtifacts()
     }
 
-    func test_load_deliversNoImagesOnEmptyCache() {
-        let sut = makeSut()
+    func test_load_deliversNoImagesOnEmptyCache() throws {
+        let sut = try makeSut()
         
         load(sut: sut, expectedResult: .success([]))
     }
     
-    func test_load_deliversFeedSavedOnAnotherInstance() {
-        let sutForSaving = makeSut()
-        let sutForLoading = makeSut()
+    func test_load_deliversFeedSavedOnAnotherInstance() throws {
+        let sutForSaving = try makeSut()
+        let sutForLoading = try makeSut()
         let feed = anyFeed().models
         
         save(with: sutForSaving, feed: feed)
@@ -36,12 +36,12 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
         load(sut: sutForLoading, expectedResult: .success(feed))
     }
     
-    func test_save_overridesCachePreviouslyInsertedByAnotherInstanse() {
-        let firstSavingSut = makeSut()
+    func test_save_overridesCachePreviouslyInsertedByAnotherInstanse() throws {
+        let firstSavingSut = try makeSut()
         let firstFeed = anyFeed().models
-        let latestSavingSut = makeSut()
+        let latestSavingSut = try makeSut()
         let latestFeed = anyFeed().models
-        let loadingSut = makeSut()
+        let loadingSut = try makeSut()
         
         save(with: firstSavingSut, feed: firstFeed)
         save(with: latestSavingSut, feed: latestFeed)
@@ -51,8 +51,8 @@ final class EssentialFeedCacheIntegrationTests: XCTestCase {
     
     // MARK: - Helpers:
     
-    private func makeSut() -> LocalFeedLoader {
-        let store = CodableFeedStore(storeUrl: storeUrl)
+    private func makeSut() throws -> LocalFeedLoader {
+        let store = try CoreDataFeedStore(storeURL: storeUrl)
         let sut = LocalFeedLoader(store: store, currentDate: Date.init)
         checkForMemoryLeaks(instance: store)
         checkForMemoryLeaks(instance: sut)
