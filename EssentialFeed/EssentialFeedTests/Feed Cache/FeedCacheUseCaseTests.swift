@@ -105,8 +105,10 @@ final class FeedCacheUseCaseTests: XCTestCase {
     private func expect(sut: LocalFeedLoader, toReceive error: NSError?, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
         let exp = expectation(description: "waiting for save")
         var receivedError: NSError?
-        sut.save(feed: anyFeed().models) { error in
-            receivedError = error as? NSError
+        sut.save(feed: anyFeed().models) { saveResult in
+            if case let .failure(error) = saveResult {
+                receivedError = error as NSError
+            }
             exp.fulfill()
         }
         action()

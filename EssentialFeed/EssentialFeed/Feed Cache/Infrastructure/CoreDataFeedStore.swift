@@ -56,10 +56,10 @@ public final class CoreDataFeedStore: FeedStore {
 				managedCache.feed = ManagedCache.managedFeed(from: feed, in: context)
 				managedCache.timestamp = timestamp
 				try context.save()
-				completion(nil)
+                completion(.success(()))
 			} catch {
 				context.reset()
-				completion(error)
+                completion(.failure(error))
 			}
 		}
 	}
@@ -68,10 +68,10 @@ public final class CoreDataFeedStore: FeedStore {
         context.perform { [context] in
             do {
                 try ManagedCache.find(in: context).map(context.delete).map(context.save)
-                completion(nil)
+                completion(.success(()))
             } catch {
                 context.reset()
-                completion(error)
+                completion(.failure(error))
             }
         }
     }

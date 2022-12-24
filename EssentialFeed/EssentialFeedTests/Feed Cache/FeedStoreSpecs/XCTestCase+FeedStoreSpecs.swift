@@ -111,8 +111,10 @@ extension FeedStoreSpecs where Self: XCTestCase {
     func insert(sut: FeedStore, feed: [LocalFeedImage], timestamp: Date) -> Error? {
         let exp = expectation(description: "Waiting for retrival")
         var error: Error?
-        sut.insert(feed: feed, timestamp: timestamp) { insertionError in
-            error = insertionError
+        sut.insert(feed: feed, timestamp: timestamp) { result in
+            if case let .failure(insertionError) = result {
+                error = insertionError
+            }
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)
@@ -145,8 +147,10 @@ extension FeedStoreSpecs where Self: XCTestCase {
     func delete(sut: FeedStore) -> Error? {
         var error: Error?
         let exp = expectation(description: "Waiting for retrival")
-        sut.deleteFeed { insertionError in
-            error = insertionError
+        sut.deleteFeed { result in
+            if case let .failure(deletionError) = result {
+                error = deletionError
+            }
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)

@@ -37,15 +37,17 @@ extension LocalFeedLoader: FeedLoader {
 }
 
 extension LocalFeedLoader {
-    public typealias SaveResult = Error?
+    public typealias SaveResult = Result<Void, Error>
     
     public func save(feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
-        store.deleteFeed() { [weak self] error in
+        store.deleteFeed() { [weak self] deletionResult in
             guard let self = self else { return }
-            if let error = error {
-                completion(error)
-            } else {
+            
+            switch deletionResult {
+            case .success:
                 self.insert(feed: feed, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
             }
         }
     }
