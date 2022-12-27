@@ -8,6 +8,7 @@
 import UIKit
 
 final class FeedCell: UITableViewCell {
+    @IBOutlet weak var locationContainer: UIView!
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var feedImageView: UIImageView!
