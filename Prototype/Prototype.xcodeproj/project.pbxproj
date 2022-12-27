@@ -12,6 +12,7 @@
 		F7D0AB7A295A9AA5007252DC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7D0AB78295A9AA5007252DC /* Main.storyboard */; };
 		F7D0AB7C295A9AA6007252DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7D0AB7B295A9AA6007252DC /* Assets.xcassets */; };
 		F7D0AB7F295A9AA6007252DC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7D0AB7D295A9AA6007252DC /* LaunchScreen.storyboard */; };
+		F7D0AB89295AA3CD007252DC /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D0AB88295AA3CD007252DC /* FeedViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		F7D0AB7B295A9AA6007252DC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F7D0AB7E295A9AA6007252DC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F7D0AB80295A9AA6007252DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F7D0AB88295AA3CD007252DC /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 				F7D0AB7B295A9AA6007252DC /* Assets.xcassets */,
 				F7D0AB7D295A9AA6007252DC /* LaunchScreen.storyboard */,
 				F7D0AB80295A9AA6007252DC /* Info.plist */,
+				F7D0AB88295AA3CD007252DC /* FeedViewController.swift */,
 			);
 			path = Prototype;
 			sourceTree = "<group>";
@@ -136,6 +139,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7D0AB73295A9AA5007252DC /* AppDelegate.swift in Sources */,
+				F7D0AB89295AA3CD007252DC /* FeedViewController.swift in Sources */,
 				F7D0AB75295A9AA5007252DC /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -280,7 +284,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -307,7 +310,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;

@@ -7,17 +7,17 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Table View Controller-->
+        <!--Feed View Controller-->
         <scene sceneID="gpy-wm-Yli">
             <objects>
-                <tableViewController id="wuj-Xo-luW" sceneMemberID="viewController">
+                <tableViewController id="wuj-Xo-luW" customClass="FeedViewController" customModule="Prototype" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="QAa-wk-V6c">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <inset key="separatorInset" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="550" id="vyG-Q0-r86">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="FeedCell" rowHeight="550" id="vyG-Q0-r86">
                                 <rect key="frame" x="0.0" y="50" width="393" height="550"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vyG-Q0-r86" id="6hA-c8-DxX">
@@ -93,9 +93,9 @@ Location</string>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="xqt-o1-wxU" firstAttribute="leading" secondItem="6hA-c8-DxX" secondAttribute="leadingMargin" id="Fsc-LQ-4wO"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="xqt-o1-wxU" secondAttribute="bottom" id="SyW-j1-Q3P"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="xqt-o1-wxU" secondAttribute="bottom" priority="999" id="SyW-j1-Q3P"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="xqt-o1-wxU" secondAttribute="trailing" id="bOl-nP-P1i"/>
-                                        <constraint firstItem="xqt-o1-wxU" firstAttribute="top" secondItem="6hA-c8-DxX" secondAttribute="topMargin" id="yaJ-Lp-zeJ"/>
+                                        <constraint firstItem="xqt-o1-wxU" firstAttribute="top" secondItem="6hA-c8-DxX" secondAttribute="topMargin" priority="999" id="yaJ-Lp-zeJ"/>
                                     </constraints>
                                 </tableViewCellContentView>
                             </tableViewCell>
