@@ -23,7 +23,6 @@ final class FeedViewController: UIViewController {
 }
 
 final class FeedViewControllerTests: XCTestCase {
-    
     func test_init_doesNotTriggerLoading() {
         let loader = SpyLoader()
         _ = FeedViewController(loader: loader)
@@ -32,8 +31,7 @@ final class FeedViewControllerTests: XCTestCase {
     }
     
     func test_viewDidLoad_triggersLoading() {
-        let loader = SpyLoader()
-        let sut = FeedViewController(loader: loader)
+        let (loader, sut) = makeSut()
         
         sut.loadViewIfNeeded()
         
@@ -41,6 +39,14 @@ final class FeedViewControllerTests: XCTestCase {
     }
     
     // MARK: - Helpers
+    
+    private func makeSut(file: StaticString = #filePath, line: UInt = #line) -> (SpyLoader, FeedViewController) {
+        let loader = SpyLoader()
+        let sut = FeedViewController(loader: loader)
+        checkForMemoryLeaks(instance: loader, file: file, line: line)
+        checkForMemoryLeaks(instance: sut, file: file, line: line)
+        return (loader, sut)
+    }
     
     final class SpyLoader: FeedLoader  {
         func load(completion: @escaping (FeedLoader.Result) -> Void) {
