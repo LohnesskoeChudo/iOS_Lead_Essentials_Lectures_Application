@@ -11,6 +11,7 @@
 		F7139744295CA9C400D0278A /* EssentialFeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7B0A1F72938CFEA005CD21A /* EssentialFeed.framework */; };
 		F7139745295CA9C400D0278A /* EssentialFeed.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F7B0A1F72938CFEA005CD21A /* EssentialFeed.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F7139749295CAB2400D0278A /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E5A294293F95700074FF0A /* Helpers.swift */; };
+		F713974B295CB6ED00D0278A /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F713974A295CB6ED00D0278A /* FeedViewController.swift */; };
 		F71DDE56294D9AD100BB10B2 /* FeedCacheTestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71DDE55294D9AD100BB10B2 /* FeedCacheTestHelpers.swift */; };
 		F71DDE58294D9BD300BB10B2 /* FeedCacheValidationUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71DDE57294D9BD300BB10B2 /* FeedCacheValidationUseCaseTests.swift */; };
 		F71DDE5A294ECDFD00BB10B2 /* FeedCacheValidationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71DDE59294ECDFD00BB10B2 /* FeedCacheValidationPolicy.swift */; };
@@ -109,6 +110,7 @@
 
 /* Begin PBXFileReference section */
 		F7139741295CA50B00D0278A /* FeedViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewControllerTests.swift; sourceTree = "<group>"; };
+		F713974A295CB6ED00D0278A /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		F71DDE55294D9AD100BB10B2 /* FeedCacheTestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCacheTestHelpers.swift; sourceTree = "<group>"; };
 		F71DDE57294D9BD300BB10B2 /* FeedCacheValidationUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCacheValidationUseCaseTests.swift; sourceTree = "<group>"; };
 		F71DDE59294ECDFD00BB10B2 /* FeedCacheValidationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCacheValidationPolicy.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				F774F535295BEA8200EEF800 /* EssentialFeed_iOS.h */,
+				F713974A295CB6ED00D0278A /* FeedViewController.swift */,
 			);
 			path = EssentialFeed_iOS;
 			sourceTree = "<group>";
@@ -540,6 +543,7 @@
 				TargetAttributes = {
 					F774F532295BEA8200EEF800 = {
 						CreatedOnToolsVersion = 14.1;
+						LastSwiftMigration = 1410;
 					};
 					F774F539295BEA8200EEF800 = {
 						CreatedOnToolsVersion = 14.1;
@@ -632,6 +636,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F713974B295CB6ED00D0278A /* FeedViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -743,6 +748,7 @@
 		F774F542295BEA8200EEF800 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -767,6 +773,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -775,6 +782,7 @@
 		F774F543295BEA8200EEF800 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -808,6 +816,7 @@
 		F774F544295BEA8200EEF800 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -831,6 +840,7 @@
 		F774F545295BEA8200EEF800 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
