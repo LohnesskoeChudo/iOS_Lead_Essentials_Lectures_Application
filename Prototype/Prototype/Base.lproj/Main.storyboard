@@ -112,6 +112,12 @@ Location</string>
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="k9o-ke-06e"/>
+                    <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="OdC-dg-d7E">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <connections>
+                            <action selector="reload" destination="wuj-Xo-luW" eventType="valueChanged" id="RO4-zm-20u"/>
+                        </connections>
+                    </refreshControl>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lq1-vL-ekR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
