@@ -8,7 +8,7 @@
 import XCTest
 import EssentialFeed
 
-final class FeedViewController: UIViewController {
+final class FeedViewController: UITableViewController {
     private var loader: FeedLoader?
     
     convenience init(loader: FeedLoader) {
@@ -18,6 +18,12 @@ final class FeedViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
+        load()
+    }
+    
+    @objc private func load() {
         loader?.load() { _ in }
     }
 }
@@ -38,6 +44,18 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.loadCallCount, 1)
     }
     
+    func test_userInitiatedLoading_triggersLoading() {
+        let (loader, sut) = makeSut()
+        
+        sut.loadViewIfNeeded()
+        
+        sut.simulateUserInitiatedLoading()
+        XCTAssertEqual(loader.loadCallCount, 2)
+        
+        sut.simulateUserInitiatedLoading()
+        XCTAssertEqual(loader.loadCallCount, 3)
+    }
+    
     // MARK: - Helpers
     
     private func makeSut(file: StaticString = #filePath, line: UInt = #line) -> (SpyLoader, FeedViewController) {
@@ -54,5 +72,15 @@ final class FeedViewControllerTests: XCTestCase {
         }
         
         var loadCallCount = 0
+    }
+}
+
+private extension FeedViewController {
+    func simulateUserInitiatedLoading() {
+        refreshControl?.allTargets.forEach { target in
+            refreshControl?.actions(forTarget: target, forControlEvent: .valueChanged)?.forEach {
+                (target as NSObject).perform(Selector($0))
+            }
+        }
     }
 }
