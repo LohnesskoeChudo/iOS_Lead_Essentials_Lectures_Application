@@ -9,9 +9,9 @@ import XCTest
 import EssentialFeed
 
 final class FeedViewController: UIViewController {
-    private var loader: FeedViewControllerTests.SpyLoader?
+    private var loader: FeedLoader?
     
-    convenience init(loader: FeedViewControllerTests.SpyLoader) {
+    convenience init(loader: FeedLoader) {
         self.init()
         self.loader = loader
     }
