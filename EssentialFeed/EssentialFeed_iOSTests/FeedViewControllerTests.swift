@@ -77,7 +77,7 @@ final class FeedViewControllerTests: XCTestCase {
     
     private func assert(sut: FeedViewController, isRendering feed: [FeedImage], file: StaticString = #filePath, line: UInt = #line) {
         guard sut.renderedViewsCount == feed.count else {
-            return XCTFail("Expected \(feed.count) images but got \(sut.renderedViewsCount)")
+            return XCTFail("Expected \(feed.count) images but got \(sut.renderedViewsCount)", file: file, line: line)
         }
         XCTAssertEqual(sut.renderedViewsCount, feed.count, file: file, line: line)
         for (index, image) in feed.enumerated() {
