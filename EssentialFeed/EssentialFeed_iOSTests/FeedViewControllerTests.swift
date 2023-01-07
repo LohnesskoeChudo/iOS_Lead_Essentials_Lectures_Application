@@ -54,20 +54,20 @@ final class FeedViewControllerTests: XCTestCase {
         
         loader.complete(with: [image0], at: 0)
         XCTAssertEqual(sut.renderedViewsCount, 1)
-        assert(sut: sut, isRendering: image0, at: 0)
+        assert(sut: sut, hasViewConfiguredFor: image0, at: 0)
         
         sut.simulateUserInitiatedLoading()
         loader.complete(with: [image0, image1, image2, image3], at: 1)
         XCTAssertEqual(sut.renderedViewsCount, 4)
-        assert(sut: sut, isRendering: image0, at: 0)
-        assert(sut: sut, isRendering: image1, at: 1)
-        assert(sut: sut, isRendering: image2, at: 2)
-        assert(sut: sut, isRendering: image3, at: 3)
+        assert(sut: sut, hasViewConfiguredFor: image0, at: 0)
+        assert(sut: sut, hasViewConfiguredFor: image1, at: 1)
+        assert(sut: sut, hasViewConfiguredFor: image2, at: 2)
+        assert(sut: sut, hasViewConfiguredFor: image3, at: 3)
     }
     
     // MARK: - Helpers
     
-    private func assert(sut: FeedViewController, isRendering image: FeedImage, at index: Int, file: StaticString = #filePath, line: UInt = #line) {
+    private func assert(sut: FeedViewController, hasViewConfiguredFor image: FeedImage, at index: Int, file: StaticString = #filePath, line: UInt = #line) {
         guard let feedImageView = sut.feedImageView(for: index) else {
             XCTFail("Unable to find feed image view.", file: file, line: line)
             return
