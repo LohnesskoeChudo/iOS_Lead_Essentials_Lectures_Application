@@ -31,13 +31,13 @@ final class FeedViewControllerTests: XCTestCase {
         sut.loadViewIfNeeded()
         XCTAssertTrue(sut.isLoadingIndicatorActive, "Expected loading indicator once view is loaded")
 
-        loader.complete(at: 0)
+        loader.completeWith(feed: [], at: 0)
         XCTAssertFalse(sut.isLoadingIndicatorActive, "Expected no loading indicator once loading is completed")
 
         sut.simulateUserInitiatedLoading()
         XCTAssertTrue(sut.isLoadingIndicatorActive, "Expected loading indicator once user initiates a reload")
 
-        loader.complete(at: 1)
+        loader.completeWith(feed: [], at: 1)
         XCTAssertFalse(sut.isLoadingIndicatorActive, "Expected no loading indicator once user initiated loading is completed")
     }
     
@@ -52,11 +52,11 @@ final class FeedViewControllerTests: XCTestCase {
         
         assert(sut: sut, isRendering: [])
         
-        loader.complete(with: [image0], at: 0)
+        loader.completeWith(feed: [image0], at: 0)
         assert(sut: sut, isRendering: [image0])
         
         sut.simulateUserInitiatedLoading()
-        loader.complete(with: [image0, image1, image2, image3], at: 1)
+        loader.completeWith(feed: [image0, image1, image2, image3], at: 1)
         assert(sut: sut, isRendering: [image0, image1, image2, image3])
     }
     
@@ -65,7 +65,7 @@ final class FeedViewControllerTests: XCTestCase {
         let (loader, sut) = makeSut()
         
         sut.loadViewIfNeeded()
-        loader.complete(with: feed)
+        loader.completeWith(feed: feed)
         assert(sut: sut, isRendering: feed)
         
         sut.simulateUserInitiatedLoading()
@@ -124,8 +124,8 @@ final class FeedViewControllerTests: XCTestCase {
             completions.count
         }
         
-        func complete(with images: [FeedImage] = [], at index: Int = 0) {
-            completions[index](.success(images))
+        func completeWith(feed: [FeedImage], at index: Int = 0) {
+            completions[index](.success(feed))
         }
         
         func completeWith(error: Error, at index: Int = 0) {
