@@ -8,13 +8,19 @@
 import UIKit
 import EssentialFeed
 
+public protocol ImageDataLoader {
+    func loadImageData(from url: URL)
+}
+
 public final class FeedViewController: UITableViewController {
     private var loader: FeedLoader?
+    private var imageDataLoader: ImageDataLoader?
     private var images: [FeedImage] = []
     
-    public convenience init(loader: FeedLoader) {
+    public convenience init(loader: FeedLoader, imageDataLoader: ImageDataLoader) {
         self.init()
         self.loader = loader
+        self.imageDataLoader = imageDataLoader
     }
     
     public override func viewDidLoad() {
@@ -45,6 +51,7 @@ public final class FeedViewController: UITableViewController {
         cell.descriptionLabel.text = image.description
         cell.locationLabel.text = image.location
         cell.locationContainer.isHidden = image.location == nil
+        imageDataLoader?.loadImageData(from: image.url)
         return cell
     }
 }

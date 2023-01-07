@@ -73,6 +73,22 @@ final class FeedViewControllerTests: XCTestCase {
         assert(sut: sut, isRendering: feed)
     }
     
+    func test_feedImageBecomeVisible_loadsImageDataFromUrl() {
+        let image0 = makeImage(url: URL(string: "http://image-url-0.com")!)
+        let image1 = makeImage(url: URL(string: "http://image-url-1.com")!)
+        let (loader, sut) = makeSut()
+        
+        sut.loadViewIfNeeded()
+        loader.completeWith(feed: [image0, image1])
+        XCTAssertEqual(loader.imageDataUrls, [], "We don't want to load image data just after the feed has been loaded. We are waiting for feed image views become visible")
+        
+        sut.simulateFeedImageViewBecomeVisible(at: 0)
+        XCTAssertEqual(loader.imageDataUrls, [image0.url])
+        
+        sut.simulateFeedImageViewBecomeVisible(at: 1)
+        XCTAssertEqual(loader.imageDataUrls, [image0.url, image1.url])
+    }
+    
     // MARK: - Helpers
     
     private func assert(sut: FeedViewController, isRendering feed: [FeedImage], file: StaticString = #filePath, line: UInt = #line) {
@@ -108,16 +124,22 @@ final class FeedViewControllerTests: XCTestCase {
     
     private func makeSut(file: StaticString = #filePath, line: UInt = #line) -> (SpyLoader, FeedViewController) {
         let loader = SpyLoader()
-        let sut = FeedViewController(loader: loader)
+        let sut = FeedViewController(loader: loader, imageDataLoader: loader)
         checkForMemoryLeaks(instance: loader, file: file, line: line)
         checkForMemoryLeaks(instance: sut, file: file, line: line)
         return (loader, sut)
     }
     
-    final class SpyLoader: FeedLoader  {
+    final class SpyLoader: FeedLoader, ImageDataLoader  {
         private var completions: [(FeedLoader.Result) -> Void] = []
+        var imageDataUrls: [URL] = []
+        
         func load(completion: @escaping (FeedLoader.Result) -> Void) {
             completions.append(completion)
+        }
+        
+        func loadImageData(from url: URL) {
+            imageDataUrls.append(url)
         }
         
         var loadCallCount: Int {
@@ -141,6 +163,10 @@ private extension FeedViewController {
                 (target as NSObject).perform(Selector($0))
             }
         }
+    }
+    
+    func simulateFeedImageViewBecomeVisible(at index: Int) {
+        _ = feedImageView(for: index)
     }
     
     var isLoadingIndicatorActive: Bool {
