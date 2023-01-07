@@ -50,22 +50,27 @@ final class FeedViewControllerTests: XCTestCase {
         
         sut.loadViewIfNeeded()
         
-        XCTAssertEqual(sut.renderedViewsCount, 0)
+        assert(sut: sut, isRendering: [])
         
         loader.complete(with: [image0], at: 0)
-        XCTAssertEqual(sut.renderedViewsCount, 1)
-        assert(sut: sut, hasViewConfiguredFor: image0, at: 0)
+        assert(sut: sut, isRendering: [image0])
         
         sut.simulateUserInitiatedLoading()
         loader.complete(with: [image0, image1, image2, image3], at: 1)
-        XCTAssertEqual(sut.renderedViewsCount, 4)
-        assert(sut: sut, hasViewConfiguredFor: image0, at: 0)
-        assert(sut: sut, hasViewConfiguredFor: image1, at: 1)
-        assert(sut: sut, hasViewConfiguredFor: image2, at: 2)
-        assert(sut: sut, hasViewConfiguredFor: image3, at: 3)
+        assert(sut: sut, isRendering: [image0, image1, image2, image3])
     }
     
     // MARK: - Helpers
+    
+    private func assert(sut: FeedViewController, isRendering feed: [FeedImage], file: StaticString = #filePath, line: UInt = #line) {
+        guard sut.renderedViewsCount == feed.count else {
+            return XCTFail("Expected \(feed.count) images but got \(sut.renderedViewsCount)")
+        }
+        XCTAssertEqual(sut.renderedViewsCount, feed.count, file: file, line: line)
+        for (index, image) in feed.enumerated() {
+            assert(sut: sut, hasViewConfiguredFor: image, at: index, file: file, line: line)
+        }
+    }
     
     private func assert(sut: FeedViewController, hasViewConfiguredFor image: FeedImage, at index: Int, file: StaticString = #filePath, line: UInt = #line) {
         guard let feedImageView = sut.feedImageView(for: index) else {
