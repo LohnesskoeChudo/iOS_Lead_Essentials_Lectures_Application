@@ -13,13 +13,13 @@ public protocol ImageDataLoader {
 }
 
 public final class FeedViewController: UITableViewController {
-    private var loader: FeedLoader?
+    private var feedLoader: FeedLoader?
     private var imageDataLoader: ImageDataLoader?
     private var images: [FeedImage] = []
     
-    public convenience init(loader: FeedLoader, imageDataLoader: ImageDataLoader) {
+    public convenience init(feedLoader: FeedLoader, imageDataLoader: ImageDataLoader) {
         self.init()
-        self.loader = loader
+        self.feedLoader = feedLoader
         self.imageDataLoader = imageDataLoader
     }
     
@@ -32,7 +32,7 @@ public final class FeedViewController: UITableViewController {
     
     @objc private func load() {
         refreshControl?.beginRefreshing()
-        loader?.load() { [weak self] images in
+        feedLoader?.load() { [weak self] images in
             self?.refreshControl?.endRefreshing()
             if case let .success(images) = images {
                 self?.images = images
