@@ -60,6 +60,19 @@ final class FeedViewControllerTests: XCTestCase {
         assert(sut: sut, isRendering: [image0, image1, image2, image3])
     }
     
+    func test_loadFeedCompletion_doesNotAlterStateOnError() {
+        let feed = anyFeed()
+        let (loader, sut) = makeSut()
+        
+        sut.loadViewIfNeeded()
+        loader.complete(with: feed)
+        assert(sut: sut, isRendering: feed)
+        
+        sut.simulateUserInitiatedLoading()
+        loader.completeWith(error: anyNsError())
+        assert(sut: sut, isRendering: feed)
+    }
+    
     // MARK: - Helpers
     
     private func assert(sut: FeedViewController, isRendering feed: [FeedImage], file: StaticString = #filePath, line: UInt = #line) {
@@ -81,6 +94,12 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(feedImageView.isShowingLocation, isShowingLocation, file: file, line: line)
         XCTAssertEqual(feedImageView.locationText, image.location, file: file, line: line)
         XCTAssertEqual(feedImageView.descriptionText, image.description, file: file, line: line)
+    }
+    
+    private func anyFeed() -> [FeedImage] {
+        let image = makeImage(description: "description")
+        let anotherImage = makeImage(location: "location")
+        return [image, anotherImage]
     }
             
     private func makeImage(id: UUID? = nil, description: String? = nil, location: String? = nil, url: URL? = nil) -> FeedImage {
@@ -107,6 +126,10 @@ final class FeedViewControllerTests: XCTestCase {
         
         func complete(with images: [FeedImage] = [], at index: Int = 0) {
             completions[index](.success(images))
+        }
+        
+        func completeWith(error: Error, at index: Int = 0) {
+            completions[index](.failure(error))
         }
     }
 }
