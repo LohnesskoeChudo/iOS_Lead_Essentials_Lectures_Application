@@ -89,6 +89,22 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.imageDataUrls, [image0.url, image1.url])
     }
     
+    func test_feedImageViewBecomeNonVisible_cancelsImageDataLoading() {
+        let image0 = makeImage(url: URL(string: "http://image-url-0.com")!)
+        let image1 = makeImage(url: URL(string: "http://image-url-1.com")!)
+        let (loader, sut) = makeSut()
+        
+        sut.loadViewIfNeeded()
+        loader.completeFeedLoadingWith(feed: [image0, image1])
+        XCTAssertEqual(loader.cancelledImageDataUrls, [])
+        
+        sut.simulateFeedImageViewBecomeNonVisible(at: 0)
+        XCTAssertEqual(loader.cancelledImageDataUrls, [image0.url])
+        
+        sut.simulateFeedImageViewBecomeNonVisible(at: 1)
+        XCTAssertEqual(loader.cancelledImageDataUrls, [image0.url, image1.url])
+    }
+    
     // MARK: - Helpers
     
     private func assert(sut: FeedViewController, isRendering feed: [FeedImage], file: StaticString = #filePath, line: UInt = #line) {
@@ -154,9 +170,19 @@ final class FeedViewControllerTests: XCTestCase {
         // MARK: ImageDataLoader
         
         var imageDataUrls: [URL] = []
+        var cancelledImageDataUrls: [URL] = []
         
-        func loadImageData(from url: URL) {
+        func loadImageData(from url: URL) -> ImageDataLoaderTask {
             imageDataUrls.append(url)
+            return TaskSpy { [weak self] in self?.cancelledImageDataUrls.append(url) }
+        }
+    }
+    
+    struct TaskSpy: ImageDataLoaderTask {
+        let cancelHandler: () -> Void
+        
+        func cancel() {
+            cancelHandler()
         }
     }
 }
@@ -170,8 +196,16 @@ private extension FeedViewController {
         }
     }
     
-    func simulateFeedImageViewBecomeVisible(at index: Int) {
-        _ = feedImageView(for: index)
+    @discardableResult
+    func simulateFeedImageViewBecomeVisible(at index: Int) -> FeedImageCell? {
+        feedImageView(for: index)
+    }
+    
+    func simulateFeedImageViewBecomeNonVisible(at index: Int) {
+        let feedImageView = simulateFeedImageViewBecomeVisible(at: index)!
+        let delegate = tableView.delegate
+        let indexPath = IndexPath(row: index, section: 0)
+        delegate?.tableView?(tableView, didEndDisplaying: feedImageView, forRowAt: indexPath)
     }
     
     var isLoadingIndicatorActive: Bool {
