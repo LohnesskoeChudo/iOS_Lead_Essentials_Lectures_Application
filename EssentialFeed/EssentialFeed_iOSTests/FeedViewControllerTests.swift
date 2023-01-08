@@ -191,6 +191,27 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(view0?.isShowingRetryButton, true)
     }
     
+    func test_imageViewRetryButtonPress_reloadsImageData() {
+        let image0 = makeImage(url: URL(string: "http://image-url-0.com")!)
+        let image1 = makeImage(url: URL(string: "http://image-url-0.com")!)
+        let (loader, sut) = makeSut()
+        
+        sut.loadViewIfNeeded()
+        loader.completeFeedLoadingWith(feed: [image0, image1])
+        let view0 = sut.simulateFeedImageViewBecomeVisible(at: 0)
+        let view1 = sut.simulateFeedImageViewBecomeVisible(at: 1)
+        XCTAssertEqual(loader.imageDataUrls, [image0.url, image1.url])
+        
+        loader.completeImageDataLoadingWithError(at: 0)
+        loader.completeImageDataLoadingWithError(at: 1)
+        
+        view0?.simulatePressRetryButton()
+        XCTAssertEqual(loader.imageDataUrls, [image0.url, image1.url, image0.url])
+        
+        view1?.simulatePressRetryButton()
+        XCTAssertEqual(loader.imageDataUrls, [image0.url, image1.url, image0.url, image1.url])
+    }
+    
     // MARK: - Helpers
     
     private func assert(sut: FeedViewController, isRendering feed: [FeedImage], file: StaticString = #filePath, line: UInt = #line) {
@@ -282,6 +303,16 @@ final class FeedViewControllerTests: XCTestCase {
     }
 }
 
+private extension UIControl {
+    func simulate(event: UIControl.Event) {
+        allTargets.forEach { target in
+            actions(forTarget: target, forControlEvent: event)?.forEach {
+                (target as NSObject).perform(Selector($0))
+            }
+        }
+    }
+}
+
 private extension FeedViewController {
     func simulateUserInitiatedLoading() {
         refreshControl?.allTargets.forEach { target in
@@ -317,6 +348,10 @@ private extension FeedViewController {
 }
 
 extension FeedImageCell {
+    func simulatePressRetryButton() {
+        retryButton.simulate(event: .touchUpInside)
+    }
+    
     var isShowingLocation: Bool {
         !locationContainer.isHidden
     }
