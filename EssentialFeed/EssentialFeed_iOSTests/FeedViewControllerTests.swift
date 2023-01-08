@@ -193,7 +193,7 @@ final class FeedViewControllerTests: XCTestCase {
     
     func test_imageViewRetryButtonPress_reloadsImageData() {
         let image0 = makeImage(url: URL(string: "http://image-url-0.com")!)
-        let image1 = makeImage(url: URL(string: "http://image-url-0.com")!)
+        let image1 = makeImage(url: URL(string: "http://image-url-1.com")!)
         let (loader, sut) = makeSut()
         
         sut.loadViewIfNeeded()
@@ -214,7 +214,7 @@ final class FeedViewControllerTests: XCTestCase {
     
     func test_feedImageView_preloadsImageDataWhenNearVisible() {
         let image0 = makeImage(url: URL(string: "http://image-url-0.com")!)
-        let image1 = makeImage(url: URL(string: "http://image-url-0.com")!)
+        let image1 = makeImage(url: URL(string: "http://image-url-1.com")!)
         let (loader, sut) = makeSut()
         
         sut.loadViewIfNeeded()
