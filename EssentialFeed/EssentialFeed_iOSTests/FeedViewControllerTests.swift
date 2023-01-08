@@ -330,9 +330,11 @@ private extension UIControl {
 }
 
 private extension FeedViewController {
+    private var feedSection: Int { 0 }
+    
     func simulateFeedImageViewNearVisible(at index: Int) {
         let dataSourse = tableView.prefetchDataSource
-        let indexPath = IndexPath(row: index, section: 0)
+        let indexPath = IndexPath(row: index, section: feedSection)
         dataSourse?.tableView(tableView, prefetchRowsAt: [indexPath])
     }
     
@@ -348,7 +350,7 @@ private extension FeedViewController {
     func simulateFeedImageViewBecomeNonVisible(at index: Int) {
         let feedImageView = simulateFeedImageViewBecomeVisible(at: index)!
         let delegate = tableView.delegate
-        let indexPath = IndexPath(row: index, section: 0)
+        let indexPath = IndexPath(row: index, section: feedSection)
         delegate?.tableView?(tableView, didEndDisplaying: feedImageView, forRowAt: indexPath)
     }
     
@@ -357,11 +359,11 @@ private extension FeedViewController {
     }
     
     var renderedViewsCount: Int {
-        tableView.numberOfRows(inSection: 0)
+        tableView.numberOfRows(inSection: feedSection)
     }
     
     func feedImageView(for index: Int) -> FeedImageCell? {
-        tableView.dataSource?.tableView(tableView, cellForRowAt: IndexPath(row: index, section: 0)) as? FeedImageCell
+        tableView.dataSource?.tableView(tableView, cellForRowAt: IndexPath(row: index, section: feedSection)) as? FeedImageCell
     }
 }
 
