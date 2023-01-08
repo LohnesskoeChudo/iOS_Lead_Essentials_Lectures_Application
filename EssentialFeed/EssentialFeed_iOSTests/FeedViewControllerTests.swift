@@ -153,6 +153,28 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(view1?.renderedImage, imageData1)
     }
     
+    func test_loadImageDataRetryButton_isVisibleOnImageDataLoadingError() {
+        let image0 = makeImage(url: URL(string: "http://image-url-0.com")!)
+        let image1 = makeImage(url: URL(string: "http://image-url-1.com")!)
+        let (loader, sut) = makeSut()
+        
+        sut.loadViewIfNeeded()
+        loader.completeFeedLoadingWith(feed: [image0, image1])
+        let view0 = sut.simulateFeedImageViewBecomeVisible(at: 0)
+        let view1 = sut.simulateFeedImageViewBecomeVisible(at: 1)
+        
+        XCTAssertEqual(view0?.isShowingRetryButton, false)
+        XCTAssertEqual(view1?.isShowingRetryButton, false)
+        
+        loader.completeImageDataLoadingWithSuccess(at: 0)
+        XCTAssertEqual(view0?.isShowingRetryButton, false)
+        XCTAssertEqual(view1?.isShowingRetryButton, false)
+        
+        loader.completeImageDataLoadingWithError(at: 1)
+        XCTAssertEqual(view0?.isShowingRetryButton, false)
+        XCTAssertEqual(view1?.isShowingRetryButton, true)
+    }
+    
     // MARK: - Helpers
     
     private func assert(sut: FeedViewController, isRendering feed: [FeedImage], file: StaticString = #filePath, line: UInt = #line) {
@@ -281,6 +303,10 @@ private extension FeedViewController {
 extension FeedImageCell {
     var isShowingLocation: Bool {
         !locationContainer.isHidden
+    }
+    
+    var isShowingRetryButton: Bool {
+        !retryButton.isHidden
     }
     
     var locationText: String? {

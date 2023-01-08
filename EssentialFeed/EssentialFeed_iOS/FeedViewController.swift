@@ -59,10 +59,13 @@ public final class FeedViewController: UITableViewController {
         cell.locationContainer.isHidden = image.location == nil
         cell.imageContainer.startShimmering()
         cell.feedImageView.image = nil
+        cell.retryButton.isHidden = true
         let task = imageDataLoader?.loadImageData(from: image.url) { result in
             cell.imageContainer.stopShimmering()
             if let data = try? result.get() {
                 cell.feedImageView.image = UIImage(data: data)
+            } else {
+                cell.retryButton.isHidden = false
             }
         }
         if let task = task {
