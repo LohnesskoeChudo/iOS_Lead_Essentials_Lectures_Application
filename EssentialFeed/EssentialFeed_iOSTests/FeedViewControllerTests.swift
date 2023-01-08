@@ -49,13 +49,14 @@ final class FeedViewControllerTests: XCTestCase {
         let (loader, sut) = makeSut()
         
         sut.loadViewIfNeeded()
-        
         assert(sut: sut, isRendering: [])
         
         loader.completeFeedLoadingWith(feed: [image0], at: 0)
         assert(sut: sut, isRendering: [image0])
         
         sut.simulateUserInitiatedLoading()
+        assert(sut: sut, isRendering: [image0])
+        
         loader.completeFeedLoadingWith(feed: [image0, image1, image2, image3], at: 1)
         assert(sut: sut, isRendering: [image0, image1, image2, image3])
     }
