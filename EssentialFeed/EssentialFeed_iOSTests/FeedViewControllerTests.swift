@@ -212,6 +212,22 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.imageDataUrls, [image0.url, image1.url, image0.url, image1.url])
     }
     
+    func test_feedImageView_preloadsImageDataWhenNearVisible() {
+        let image0 = makeImage(url: URL(string: "http://image-url-0.com")!)
+        let image1 = makeImage(url: URL(string: "http://image-url-0.com")!)
+        let (loader, sut) = makeSut()
+        
+        sut.loadViewIfNeeded()
+        loader.completeFeedLoadingWith(feed: [image0, image1])
+        XCTAssertEqual(loader.imageDataUrls, [])
+        
+        sut.simulateFeedImageViewNearVisible(at: 0)
+        XCTAssertEqual(loader.imageDataUrls, [image0.url])
+        
+        sut.simulateFeedImageViewNearVisible(at: 1)
+        XCTAssertEqual(loader.imageDataUrls, [image0.url, image1.url])
+    }
+    
     // MARK: - Helpers
     
     private func assert(sut: FeedViewController, isRendering feed: [FeedImage], file: StaticString = #filePath, line: UInt = #line) {
@@ -314,6 +330,12 @@ private extension UIControl {
 }
 
 private extension FeedViewController {
+    func simulateFeedImageViewNearVisible(at index: Int) {
+        let dataSourse = tableView.prefetchDataSource
+        let indexPath = IndexPath(row: index, section: 0)
+        dataSourse?.tableView(tableView, prefetchRowsAt: [indexPath])
+    }
+    
     func simulateUserInitiatedLoading() {
         refreshControl?.simulate(event: .valueChanged)
     }
