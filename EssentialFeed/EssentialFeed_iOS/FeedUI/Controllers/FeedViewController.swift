@@ -11,7 +11,7 @@ import EssentialFeed
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
     private var refreshController: FeedRefreshViewController?
     private var imageDataLoader: ImageDataLoader?
-    private var tasks: [UUID: ImageDataLoaderTask] = [:]
+    private var cellControllers: [UUID: FeedImageCellViewController] = [:]
     private var images: [FeedImage] = [] {
         didSet { tableView.reloadData() }
     }
@@ -43,34 +43,9 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let image = images[indexPath.row]
-        let cell = FeedImageCell()
-        cell.descriptionLabel.text = image.description
-        cell.locationLabel.text = image.location
-        cell.locationContainer.isHidden = image.location == nil
-        cell.imageContainer.startShimmering()
-        cell.feedImageView.image = nil
-        cell.retryButton.isHidden = true
-        
-        let loadImageData = { [weak self, weak cell] in
-            let task = self?.imageDataLoader?.loadImageData(from: image.url) { result in
-                cell?.imageContainer.stopShimmering()
-                if let data = try? result.get() {
-                    let image = UIImage(data: data)
-                    cell?.feedImageView.image = image
-                    cell?.retryButton.isHidden = image != nil
-                } else {
-                    cell?.retryButton.isHidden = false
-                }
-            }
-            if let task = task {
-                self?.tasks[image.id] = task
-            }
-        }
-        
-        loadImageData()
-        cell.onRetry = loadImageData
-        
-        return cell
+        let controller = FeedImageCellViewController(image: image, imageDataLoader: imageDataLoader!)
+        cellControllers[image.id] = controller
+        return controller.view
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -95,12 +70,12 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     private func cancelTask(at index: Int) {
         let image = images[index]
-        tasks[image.id]?.cancel()
-        tasks[image.id] = nil
+        cellControllers[image.id] = nil
     }
     
     private func startTask(at index: Int) {
         let image = images[index]
-        tasks[image.id] = imageDataLoader?.loadImageData(from: image.url) { _ in }
+        cellControllers[image.id] = FeedImageCellViewController(image: image, imageDataLoader: imageDataLoader!)
+        let _ = cellControllers[image.id]?.view
     }
 }
