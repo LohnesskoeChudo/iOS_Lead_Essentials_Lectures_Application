@@ -10,19 +10,13 @@ import EssentialFeed
 
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
     private var refreshController: FeedRefreshViewController?
-    private var imageDataLoader: ImageDataLoader?
-    private var cellControllers: [UUID: FeedImageCellViewController] = [:]
-    private var images: [FeedImage] = [] {
+    var cellControllers: [FeedImageCellViewController] = [] {
         didSet { tableView.reloadData() }
     }
     
-    public convenience init(feedLoader: FeedLoader, imageDataLoader: ImageDataLoader) {
+    public convenience init(refreshController: FeedRefreshViewController) {
         self.init()
-        self.imageDataLoader = imageDataLoader
-        self.refreshController = FeedRefreshViewController(feedLoader: feedLoader)
-        refreshController?.onImagesReceived = { [weak self] images in
-            self?.images = images
-        }
+        self.refreshController = refreshController
     }
     
     public override func viewDidLoad() {
@@ -38,14 +32,11 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        images.count
+        cellControllers.count
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let image = images[indexPath.row]
-        let controller = FeedImageCellViewController(image: image, imageDataLoader: imageDataLoader!)
-        cellControllers[image.id] = controller
-        return controller.view
+        cellControllers[indexPath.row].view
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -69,14 +60,10 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     private func cancelTask(at index: Int) {
-        let image = images[index]
-        cellControllers[image.id] = nil
+        cellControllers[index].cancelPreload()
     }
     
     private func startTask(at index: Int) {
-        let image = images[index]
-        let controller = FeedImageCellViewController(image: image, imageDataLoader: imageDataLoader!)
-        controller.preload()
-        cellControllers[image.id] = controller
+        cellControllers[index].preload()
     }
 }

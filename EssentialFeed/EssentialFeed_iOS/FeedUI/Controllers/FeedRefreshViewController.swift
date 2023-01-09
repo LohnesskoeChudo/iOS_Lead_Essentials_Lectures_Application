@@ -8,7 +8,7 @@
 import UIKit
 import EssentialFeed
 
-final class FeedRefreshViewController {
+public final class FeedRefreshViewController {
     private let feedLoader: FeedLoader
     let view = UIRefreshControl()
     
