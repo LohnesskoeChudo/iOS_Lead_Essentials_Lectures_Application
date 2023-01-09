@@ -8,7 +8,7 @@
 import UIKit
 import EssentialFeed
 
-public final class FeedRefreshViewController {
+public final class FeedRefreshViewController: NSObject {
     private let feedLoader: FeedLoader
     let view = UIRefreshControl()
     
@@ -16,9 +16,11 @@ public final class FeedRefreshViewController {
     
     init(feedLoader: FeedLoader) {
         self.feedLoader = feedLoader
+        super.init()
+        view.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
     
-    func refresh() {
+    @objc func refresh() {
         view.beginRefreshing()
         feedLoader.load() { [weak self] images in
             self?.view.endRefreshing()
