@@ -75,7 +75,8 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     private func startTask(at index: Int) {
         let image = images[index]
-        cellControllers[image.id] = FeedImageCellViewController(image: image, imageDataLoader: imageDataLoader!)
-        let _ = cellControllers[image.id]?.view
+        let controller = FeedImageCellViewController(image: image, imageDataLoader: imageDataLoader!)
+        controller.preload()
+        cellControllers[image.id] = controller
     }
 }

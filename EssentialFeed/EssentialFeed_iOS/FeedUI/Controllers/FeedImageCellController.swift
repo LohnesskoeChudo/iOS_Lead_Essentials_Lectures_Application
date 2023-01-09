@@ -48,6 +48,10 @@ final class FeedImageCellViewController {
         }
     }
     
+    func preload() {
+        task = imageDataLoader.loadImageData(from: image.url) { _ in }
+    }
+    
     deinit {
         task?.cancel()
     }
