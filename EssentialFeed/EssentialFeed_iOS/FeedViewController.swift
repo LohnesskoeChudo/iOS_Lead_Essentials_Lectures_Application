@@ -18,34 +18,32 @@ public protocol ImageDataLoader {
 }
 
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
-    private var feedLoader: FeedLoader?
+    private var refreshController: FeedRefreshViewController?
     private var imageDataLoader: ImageDataLoader?
-    private var images: [FeedImage] = []
     private var tasks: [UUID: ImageDataLoaderTask] = [:]
+    private var images: [FeedImage] = [] {
+        didSet { tableView.reloadData() }
+    }
     
     public convenience init(feedLoader: FeedLoader, imageDataLoader: ImageDataLoader) {
         self.init()
-        self.feedLoader = feedLoader
         self.imageDataLoader = imageDataLoader
+        self.refreshController = FeedRefreshViewController(feedLoader: feedLoader)
+        refreshController?.onImagesReceived = { [weak self] images in
+            self?.images = images
+        }
     }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        refreshControl = UIRefreshControl()
+        refreshControl = refreshController?.view
         refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
         tableView.prefetchDataSource = self
         load()
     }
     
     @objc private func load() {
-        refreshControl?.beginRefreshing()
-        feedLoader?.load() { [weak self] images in
-            self?.refreshControl?.endRefreshing()
-            if case let .success(images) = images {
-                self?.images = images
-                self?.tableView.reloadData()
-            }
-        }
+        refreshController?.refresh()
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
