@@ -10,19 +10,42 @@ import EssentialFeed
 
 public enum FeedUIComposer {
     public static func make(feedLoader: FeedLoader, imageDataLoader: ImageDataLoader) -> FeedViewController {
-        let feedViewModel = FeedViewModel(feedLoader: feedLoader)
-        let refreshViewController = FeedRefreshViewController(viewModel: feedViewModel)
+        let feedViewAdapter = FeedViewAdapter(loader: imageDataLoader)
+        let proxyLoadingView = WeakRef<FeedRefreshViewController>()
+        
+        let presenter = FeedPresenter(feedLoader: feedLoader, feedView: feedViewAdapter, feedLoadingView: proxyLoadingView)
+        
+        let refreshViewController = FeedRefreshViewController(presenter: presenter)
         let feedTableViewController = FeedViewController(refreshController: refreshViewController)
-        feedViewModel.onFeedReceived = adaptFeedToCellControllers(loader: imageDataLoader, feedController: feedTableViewController)
+        
+        feedViewAdapter.feedController = feedTableViewController
+        proxyLoadingView.object = refreshViewController
         return feedTableViewController
     }
+}
+
+class WeakRef<T: AnyObject> {
+    weak var object: T?
+}
+
+extension WeakRef: FeedLoadingView where T: FeedLoadingView {
+    func display(loading: Bool) {
+        object?.display(loading: loading)
+    }
+}
+
+final class FeedViewAdapter: FeedView {
+    weak var feedController: FeedViewController?
+    private let loader: ImageDataLoader
     
-    private static func adaptFeedToCellControllers(loader: ImageDataLoader, feedController: FeedViewController) -> ([FeedImage]) -> Void {
-        return { [weak feedController] feed in
-            feedController?.cellControllers = feed.map {
-                let viewModel = FeedImageViewModel(image: $0, loader: loader, transform: UIImage.init)
-                return FeedImageCellViewController(viewModel: viewModel)
-            }
+    init(loader: ImageDataLoader) {
+        self.loader = loader
+    }
+    
+    func display(feed: [FeedImage]) {
+        feedController?.cellControllers = feed.map {
+            let viewModel = FeedImageViewModel(image: $0, loader: loader, transform: UIImage.init)
+            return FeedImageCellViewController(viewModel: viewModel)
         }
     }
 }
