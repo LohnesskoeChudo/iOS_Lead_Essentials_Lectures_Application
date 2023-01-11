@@ -8,15 +8,15 @@
 import UIKit
 import EssentialFeed
 
-protocol FeedLoadingViewDelegate {
+protocol FeedRefreshViewControllerDelegate {
     func didRequestFeedRefresh()
 }
 
 public final class FeedRefreshViewController: NSObject, FeedLoadingView {
     lazy var view = makeView()
-    let delegate: FeedLoadingViewDelegate
+    let delegate: FeedRefreshViewControllerDelegate
     
-    init(delegate: FeedLoadingViewDelegate) {
+    init(delegate: FeedRefreshViewControllerDelegate) {
         self.delegate = delegate
         super.init()
     }
