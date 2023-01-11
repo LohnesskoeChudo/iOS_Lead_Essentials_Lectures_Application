@@ -10,16 +10,15 @@ import EssentialFeed
 
 public final class FeedRefreshViewController: NSObject, FeedLoadingView {
     lazy var view = makeView()
-    let presenter: FeedPresenter
+    let loadFeed: () -> Void
     
-    init(presenter: FeedPresenter) {
-        self.presenter = presenter
+    init(loadFeed: @escaping () -> Void) {
+        self.loadFeed = loadFeed
         super.init()
-        
     }
     
     @objc func refresh() {
-        presenter.load()
+        loadFeed()
     }
     
     func display(loading: Bool) {

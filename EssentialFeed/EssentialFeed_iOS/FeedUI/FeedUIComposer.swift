@@ -15,7 +15,7 @@ public enum FeedUIComposer {
         
         let presenter = FeedPresenter(feedLoader: feedLoader, feedView: feedViewAdapter, feedLoadingView: proxyLoadingView)
         
-        let refreshViewController = FeedRefreshViewController(presenter: presenter)
+        let refreshViewController = FeedRefreshViewController(loadFeed: presenter.load)
         let feedTableViewController = FeedViewController(refreshController: refreshViewController)
         
         feedViewAdapter.feedController = feedTableViewController
