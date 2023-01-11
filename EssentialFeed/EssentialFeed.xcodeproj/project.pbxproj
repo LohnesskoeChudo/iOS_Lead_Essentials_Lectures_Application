@@ -397,20 +397,20 @@
 			isa = PBXGroup;
 			children = (
 				F7C05A6B296C252D003B4081 /* FeedUIComposer.swift */,
-				F7C05A6D296C766C003B4081 /* ViewModels */,
+				F7C05A6D296C766C003B4081 /* Presentation */,
 				F7C05A63296C18CE003B4081 /* Controllers */,
 				F7C05A64296C18DB003B4081 /* Views */,
 			);
 			path = FeedUI;
 			sourceTree = "<group>";
 		};
-		F7C05A6D296C766C003B4081 /* ViewModels */ = {
+		F7C05A6D296C766C003B4081 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
 				F7C05A6E296C7B43003B4081 /* FeedViewModel.swift */,
 				F7C05A70296C842C003B4081 /* FeedImageViewModel.swift */,
 			);
-			path = ViewModels;
+			path = Presentation;
 			sourceTree = "<group>";
 		};
 		F7C635322956C6C9005C1F9F /* Infrastructure */ = {
